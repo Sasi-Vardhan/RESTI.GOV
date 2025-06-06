@@ -39,7 +39,7 @@ def reg():
             if response.status_code != 200:
                 print(f"Failed to submit to Google Form: {response.status_code}")
         except requests.RequestException as e:
-            print(f"Error submitting to Google Form: {e}")
+            # print(f"Error submitting to Google Form: {e}")
             session.clear()
         return redirect(url_for('index'))
     
