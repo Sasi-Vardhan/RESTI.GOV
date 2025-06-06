@@ -44,7 +44,7 @@ def translate_text(text, target_lang_code):
     try:
         return GoogleTranslator(source='en', target=target_lang_code).translate(text)
     except Exception as e:
-        print(f"Translation failed: {text} - {e}")
+        # print(f"Translation failed: {text} - {e}")
         return text
 
 def parallel_translate(text_dict, lang_code):
@@ -83,7 +83,7 @@ def set_language(language):
     if language in LANGUAGES:
         session['language'] = language
         session["L"]=language
-        print(language)
+        # print(language)
     return redirect(url_for('index'))
 
 
