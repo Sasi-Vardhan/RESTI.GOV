@@ -1,0 +1,280 @@
+{% extends "base.html" %}
+
+{% block title %}{{ heading }}{% endblock %}
+
+{% block content %}
+<style>
+    body {
+        background: linear-gradient(180deg, #e6f0fa 0%, #ffffff 100%);
+        font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        margin: 0;
+        padding: 0;
+        line-height: 1.6;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .skills-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: clamp(1rem, 5vw, 2rem);
+        text-align: center;
+        flex-grow: 1;
+    }
+
+    .skills-container h1 {
+        font-size: clamp(1.8rem, 6vw, 2.5rem);
+        font-weight: 700;
+        color: #1e3a8a;
+        margin-bottom: 1rem;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .language-selector {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.75rem;
+        margin-bottom: clamp(1rem, 4vw, 1.5rem);
+    }
+
+    .language-btn {
+        padding: clamp(0.4rem, 2vw, 0.6rem) clamp(0.8rem, 3vw, 1rem);
+        background: linear-gradient(45deg, #3b82f6, #60a5fa);
+        color: white;
+        border-radius: 25px;
+        text-decoration: none;
+        font-size: clamp(0.85rem, 3vw, 1rem);
+        font-weight: 600;
+        transition: transform 0.2s, box-shadow 0.2s;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    }
+
+    .language-btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .language-btn.active {
+        background: linear-gradient(45deg, #10b981, #34d399);
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    }
+
+    .skills-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: clamp(1rem, 4vw, 1.5rem);
+        margin-bottom: clamp(1.5rem, 5vw, 2rem);
+    }
+
+    .skill-card {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        padding: clamp(1rem, 3vw, 1.5rem);
+        text-align: center;
+        transition: transform 0.3s, box-shadow 0.3s;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        border: 1px solid #e0e7ff;
+    }
+
+    .skill-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+    }
+
+    .skill-card img {
+        width: clamp(60px, 15vw, 80px);
+        height: clamp(60px, 15vw, 80px);
+        object-fit: contain;
+        margin: 0.8rem auto;
+        border-radius: 8px;
+    }
+
+    .skill-card h3 {
+        font-size: clamp(1.1rem, 4vw, 1.3rem);
+        font-weight: 600;
+        color: #1e40af;
+        margin: 0.5rem 0;
+    }
+
+    .skill-card p {
+        font-size: clamp(0.85rem, 3vw, 0.95rem);
+        color: #4b5563;
+        margin-bottom: 1rem;
+        flex-grow: 1;
+    }
+
+    .skill-card button {
+        background: linear-gradient(45deg, #3b82f6, #5b21b6);
+        color: white;
+        border: none;
+        padding: clamp(0.5rem, 2vw, 0.7rem) clamp(1rem, 3vw, 1.2rem);
+        border-radius: 8px;
+        font-size: clamp(0.9rem, 3.5vw, 1rem);
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.3s, transform 0.2s;
+        width: 100%;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    }
+
+    .skill-card button:hover {
+        background: linear-gradient(45deg, #2563eb, #4c1d95);
+        transform: scale(1.02);
+    }
+
+    .motivation-section {
+        position: relative;
+        background: linear-gradient(135deg, #1e3a8a, #10b981, #7c3aed);
+        color: white;
+        padding: clamp(1.5rem, 5vw, 2rem);
+        border-radius: 16px;
+        margin: clamp(1rem, 4vw, 1.5rem) auto;
+        max-width: 900px;
+        text-align: center;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        overflow: hidden;
+    }
+
+    .motivation-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 70%);
+        z-index: 0;
+        animation: pulse 4s infinite;
+    }
+
+    .motivation-section p {
+        font-size: clamp(1rem, 4.5vw, 1.3rem);
+        font-weight: 600;
+        margin: 0;
+        line-height: 1.5;
+        position: relative;
+        z-index: 1;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    @keyframes pulse {
+        0% { transform: scale(1); opacity: 0.5; }
+        50% { transform: scale(1.2); opacity: 0.3; }
+        100% { transform: scale(1); opacity: 0.5; }
+    }
+
+    .footer {
+        background: #1e3a8a;
+        color: white;
+        padding: clamp(1rem, 3vw, 1.5rem);
+        text-align: center;
+        margin-top: auto;
+        font-size: clamp(0.8rem, 3vw, 0.9rem);
+    }
+
+    .footer p {
+        margin: 0;
+    }
+
+    @media (max-width: 768px) {
+        .skills-container {
+            padding: clamp(0.8rem, 4vw, 1rem);
+        }
+
+        .skills-container h1 {
+            font-size: clamp(1.5rem, 5vw, 2rem);
+        }
+
+        .skills-grid {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+
+        .skill-card {
+            max-width: 90%;
+            margin: 0 auto;
+        }
+
+        .skill-card img {
+            width: clamp(50px, 12vw, 70px);
+            height: clamp(50px, 12vw, 70px);
+        }
+
+        .language-btn {
+            padding: clamp(0.3rem, 2vw, 0.5rem) clamp(0.6rem, 2.5vw, 0.8rem);
+            font-size: clamp(0.75rem, 3vw, 0.9rem);
+        }
+
+        .motivation-section {
+            padding: clamp(1rem, 4vw, 1.5rem);
+            margin: clamp(0.8rem, 3vw, 1rem) 0.8rem;
+        }
+
+        .motivation-section p {
+            font-size: clamp(0.9rem, 4vw, 1.1rem);
+        }
+    }
+
+    @media (max-width: 480px) {
+        .skill-card {
+            padding: clamp(0.8rem, 3vw, 1rem);
+        }
+
+        .skill-card img {
+            width: clamp(40px, 10vw, 60px);
+            height: clamp(40px, 10vw, 60px);
+        }
+
+        .skill-card button {
+            font-size: clamp(0.8rem, 3.5vw, 0.9rem);
+            padding: clamp(0.4rem, 2vw, 0.6rem) clamp(0.8rem, 2.5vw, 1rem);
+        }
+
+        .motivation-section p {
+            font-size: clamp(0.8rem, 4vw, 1rem);
+        }
+
+        .footer {
+            padding: clamp(0.8rem, 3vw, 1rem);
+            font-size: clamp(0.7rem, 2.5vw, 0.8rem);
+        }
+    }
+</style>
+
+<div class="skills-container">
+    <h1>{{ heading }}</h1>
+    <div class="language-selector">
+        {% for lang_key, lang_data in languages.items() %}
+            <a href="{{ url_for('set_language', language=lang_key) }}"
+               class="language-btn {% if current_lang == lang_key %}active{% endif %}"
+               aria-label="Switch to {{ lang_data.name }}">
+                {{ lang_data.native }}
+            </a>
+        {% endfor %}
+    </div>
+    <form method="POST" action="{{ url_for('select_skills.show_skills') }}">
+        <div class="skills-grid">
+            {% for skill in skills %}
+            <div class="skill-card">
+                <img src="{{ url_for('static', filename=skill.image) }}" alt="{{ skill.name }}">
+                <h3>{{ skill.name }}</h3>
+                <p>{{ skill.description }}</p>
+                <button type="submit" name="skill" value="{{ skill.key }}"
+                        aria-label="Select {{ skill.name }} skill">{{ select_button }}</button>
+            </div>
+            {% endfor %}
+        </div>
+    </form>
+    <div class="motivation-section" role="alert">
+        <p>{{ motivation_text }}</p>
+    </div>
+</div>
+<footer class="footer">
+    <p>© 2025 Rural Income Portal | Empowering Skills for a Brighter Future</p>
+</footer>
+{% endblock %}

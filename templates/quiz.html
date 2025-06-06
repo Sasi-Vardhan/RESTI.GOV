@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ skill_name }} Quiz - Government of India</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+        }
+        
+        .tricolor-stripe {
+            height: 4px;
+            background: linear-gradient(to right, #FF9933 33.33%, #FFFFFF 33.33%, #FFFFFF 66.66%, #138808 66.66%);
+        }
+        
+        .option-label:hover {
+            background-color: #f1f5f9;
+            transform: translateX(5px);
+            transition: all 0.2s ease;
+        }
+        
+        @media (max-width: 640px) {
+            .mobile-text-sm {
+                font-size: 0.875rem;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+    <!-- Top Tricolor Stripe -->
+    <div class="tricolor-stripe"></div>
+    
+    <!-- Header -->
+    <header class="bg-blue-600 text-white py-6">
+        <div class="container mx-auto px-4 text-center">
+            <h1 class="text-3xl sm:text-4xl font-bold">{{ skill_name }} Quiz</h1>
+            <p class="text-lg mt-2">Government of India - Skill Development Program</p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow flex items-center justify-center px-4 py-8">
+        <div class="bg-white p-6 sm:p-8 rounded-lg shadow-lg w-full max-w-4xl">
+            <h3 class="text-xl text-gray-600 mb-6">Question {{ question_number }} of {{ total_questions }}</h3>
+            
+            <p class="text-lg sm:text-xl mb-8 text-gray-800 font-medium leading-relaxed">{{ question.question }}</p>
+            
+            <form id="quiz-form" method="POST" action="{{ url_for('quiz.quiz') }}" class="space-y-4">
+                <div class="space-y-3">
+                    <label class="option-label flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer">
+                        <input type="radio" name="answer" value="{{ question.option1 }}" {% if answered %}disabled{% endif %} class="mr-4 h-5 w-5 text-blue-600" required> 
+                        <span class="text-lg text-gray-700">A) {{ question.option1 }}</span>
+                    </label>
+                    <label class="option-label flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer">
+                        <input type="radio" name="answer" value="{{ question.option2 }}" {% if answered %}disabled{% endif %} class="mr-4 h-5 w-5 text-blue-600"> 
+                        <span class="text-lg text-gray-700">B) {{ question.option2 }}</span>
+                    </label>
+                    <label class="option-label flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer">
+                        <input type="radio" name="answer" value="{{ question.option3 }}" {% if answered %}disabled{% endif %} class="mr-4 h-5 w-5 text-blue-600"> 
+                        <span class="text-lg text-gray-700">C) {{ question.option3 }}</span>
+                    </label>
+                    <label class="option-label flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer">
+                        <input type="radio" name="answer" value="{{ question.option4 }}" {% if answered %}disabled{% endif %} class="mr-4 h-5 w-5 text-blue-600"> 
+                        <span class="text-lg text-gray-700">D) {{ question.option4 }}</span>
+                    </label>
+                </div>
+                
+                {% if not answered %}
+                    <div class="text-center mt-8">
+                        <button type="submit" class="bg-blue-600 text-white px-12 py-3 rounded-lg hover:bg-blue-700 transition duration-200 font-semibold text-lg">Submit Answer</button>
+                    </div>
+                {% endif %}
+            </form>
+            
+            {% if answered %}
+                <div class="mt-6 p-6 {% if feedback == 'Correct!' %}bg-green-50 border-green-500{% else %}bg-red-50 border-red-500{% endif %} border-l-4 rounded-r-lg">
+                    <p class="text-xl font-semibold {% if feedback == 'Correct!' %}text-green-700{% else %}text-red-700{% endif %} mb-3">{{ feedback }}</p>
+                    <p class="text-lg text-gray-700 mb-2">Correct Answer: {{ correct_answer }}</p>
+                    <p class="text-gray-700">{{ explanation }}</p>
+                </div>
+                <form method="POST" action="{{ url_for('quiz.quiz') }}" class="mt-6 text-center">
+                    <input type="hidden" name="next" value="true">
+                    <button type="submit" class="bg-gray-600 text-white px-12 py-3 rounded-lg hover:bg-gray-700 transition duration-200 font-semibold text-lg">Next Question</button>
+                </form>
+            {% endif %}
+            
+            <div class="text-center mt-6">
+                <a href="{{ url_for('select_skills.show_skills') }}" class="text-blue-600 hover:underline font-semibold">Change Skill</a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-700 text-white py-10">
+        <div class="tricolor-stripe mb-8"></div>
+        <div class="container mx-auto px-6">
+            <!-- Main Footer Content -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
+                <!-- Government Logo Section -->
+                <div class="flex flex-col items-center text-center">
+                    <div class="bg-white p-3 rounded-full mb-4 shadow-lg">
+                        <img src="static/images/govt-logo.png" alt="Government of India" class="w-12 h-12">
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-2">Government of India</h3>
+                    <p class="text-blue-200 text-sm font-medium">Skill Initiative Program</p>
+                </div>
+                
+                <!-- Ashoka Lion Capital Section -->
+                <div class="flex flex-col items-center text-center">
+                    <div class="bg-white p-3 rounded-full mb-4 shadow-lg">
+                        <img src="static/images/ashoka-emblem.jpg" alt="Ashoka Lion Capital" class="w-16 h-16">
+                    </div>
+                    <p class="text-amber-300 text-lg font-semibold tracking-wide">सत्यमेव जयते</p>
+                    <p class="text-blue-200 text-sm mt-1">Truth Alone Triumphs</p>
+                </div>
+                
+                <!-- Ministry Section -->
+                <div class="flex flex-col items-center text-center">
+                    <div class="bg-white p-2 rounded mb-4 shadow-lg">
+                        <img src="static/images/indian-flag.webp" alt="Indian Flag" class="w-16 h-10">
+                    </div>
+                    <h4 class="text-lg font-semibold text-white mb-1">Ministry of Skill Development</h4>
+                    <p class="text-blue-200 text-sm">& Entrepreneurship</p>
+                </div>
+            </div>
+            
+            <!-- Divider -->
+            <div class="border-t border-slate-500 my-8"></div>
+            
+            <!-- Bottom Section -->
+            <div class="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+                <div class="text-center md:text-left">
+                    <p class="text-blue-100 text-sm">
+                        Empowering India through Digital Skill Development
+                    </p>
+                </div>
+                <div class="text-center md:text-right">
+                    <p class="text-slate-300 text-sm">© 2025 Government of India. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

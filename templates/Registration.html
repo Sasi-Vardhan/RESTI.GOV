@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RSETI Registration - Government of India</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #c6ceef 0%, #e1d1f2 100%);
+            min-height: 100vh;
+        }
+
+        .tricolor-stripe {
+            height: 6px;
+            background: linear-gradient(to right, #ff9933 33.33%, #ffffff 33.33%, #ffffff 66.66%, #138808 66.66%);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            margin-bottom: 40px;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px 0;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .emblem {
+            width: 60px;
+            height: 60px;
+            background: #ff9933;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 24px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .header-text {
+            text-align: center;
+        }
+
+        .header-text h1 {
+            color: #1a365d;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .header-text p {
+            color: #4a5568;
+            font-size: 16px;
+        }
+
+        /* Main Content */
+        .main-content {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: calc(100vh - 200px);
+            padding: 20px 0;
+        }
+
+        .registration-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            width: 100%;
+            max-width: 600px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .form-title {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .form-title h2 {
+            color: #1a365d;
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .form-title p {
+            color: #4a5568;
+            font-size: 18px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #2d3748;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 16px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #4299e1;
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+            background: white;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+            box-shadow: 0 8px 20px rgba(66, 153, 225, 0.3);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(66, 153, 225, 0.4);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Footer */
+        .footer {
+            background: #2d3748;
+            color: white;
+            padding: 40px 0 20px;
+            margin-top: 60px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 30px;
+        }
+
+        .footer-section {
+            text-align: center;
+        }
+
+        .footer-logo {
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .footer-logo.emblem-logo {
+            background: linear-gradient(135deg, #ff9933 0%, #ff6b35 100%);
+            color: white;
+            font-size: 32px;
+            font-weight: bold;
+        }
+
+        .footer-logo.flag-logo {
+            background: linear-gradient(to bottom, #ff9933 33.33%, #ffffff 33.33%, #ffffff 66.66%, #138808 66.66%);
+        }
+
+        .footer-section h3 {
+            font-size: 20px;
+            margin-bottom: 8px;
+            color: #cbd5e0;
+        }
+
+        .footer-section p {
+            color: #a0aec0;
+            font-size: 14px;
+        }
+
+        .hindi-text {
+            color: #ffd700;
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid #4a5568;
+            padding-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .footer-bottom p {
+            color: #a0aec0;
+            font-size: 14px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 15px;
+            }
+
+            .header-content {
+                text-align: center;
+            }
+
+            .header-text h1 {
+                font-size: 24px;
+            }
+
+            .registration-card {
+                padding: 30px 25px;
+                margin: 10px;
+            }
+
+            .form-title h2 {
+                font-size: 28px;
+            }
+
+            .footer-bottom {
+                text-align: center;
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header-text h1 {
+                font-size: 20px;
+            }
+
+            .form-title h2 {
+                font-size: 24px;
+            }
+
+            .registration-card {
+                padding: 25px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="tricolor-stripe"></div>
+    <div class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo-section">
+                    <div class="emblem">🇮🇳</div>
+                    <div class="header-text">
+                        <h1>Government of India</h1>
+                        <p>Rural Self Employment Training Institute</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="main-content">
+            <div class="registration-card">
+                <div class="form-title">
+                    <h2>RSETI Registration</h2>
+                    <p>Register for Skill Development Training</p>
+                </div>
+
+                <form id="userForm" method="post" action="{{ url_for('forms.reg') }}">
+                    <div class="form-group">
+                        <label for="name">Full Name / पूरा नाम:</label>
+                        <div class="input-wrapper">
+                            <input type="text" id="name" name="name" 
+                                   placeholder="Enter your full name" 
+                                   onfocus="speak('Please enter your full name')" 
+                                   required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">Mobile Number / मोबाइल नंबर:</label>
+                        <div class="input-wrapper">
+                            <input type="tel" id="phone" name="phone" 
+                                   placeholder="Enter your 10-digit mobile number" 
+                                   onfocus="speak('Please enter your mobile number')" 
+                                   pattern="[0-9]{10}" 
+                                   required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="city">Address / पता:</label>
+                        <div class="input-wrapper">
+                            <input type="text" id="city" name="city" 
+                                   placeholder="Enter your complete address" 
+                                   onfocus="speak('Please enter your Address')" 
+                                   required>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="submit-btn" 
+                            onclick="speak('Thank you for registering. Submitting your details.')">
+                        Submit Registration / पंजीकरण जमा करें
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-slate-700 text-white py-10">
+        <div class="tricolor-stripe mb-8"></div>
+        <div class="container mx-auto px-6">
+            <!-- Main Footer Content -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
+                <!-- Government Logo Section -->
+                <div class="flex flex-col items-center text-center">
+                    <div class="bg-white p-3 rounded-full mb-4 shadow-lg">
+                        <img src="static/images/govt-logo.png" alt="Government of India" class="w-12 h-12">
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-2">Government of India</h3>
+                    <p class="text-blue-200 text-sm font-medium">Skill Initiative Program</p>
+                </div>
+                
+                <!-- Ashoka Lion Capital Section -->
+                <div class="flex flex-col items-center text-center">
+                    <div class="bg-white p-3 rounded-full mb-4 shadow-lg">
+                        <img src="static/images/ashoka-emblem.jpg" alt="Ashoka Lion Capital" class="w-16 h-16">
+                    </div>
+                    <p class="text-amber-300 text-lg font-semibold tracking-wide">सत्यमेव जयते</p>
+                    <p class="text-blue-200 text-sm mt-1">Truth Alone Triumphs</p>
+                </div>
+                
+                <!-- Ministry Section -->
+                <div class="flex flex-col items-center text-center">
+                    <div class="bg-white p-2 rounded mb-4 shadow-lg">
+                        <img src="static/images/indian-flag.webp" alt="Indian Flag" class="w-16 h-10">
+                    </div>
+                    <h4 class="text-lg font-semibold text-white mb-1">Ministry of Skill Development</h4>
+                    <p class="text-blue-200 text-sm">& Entrepreneurship</p>
+                </div>
+            </div>
+            
+            <!-- Divider -->
+            <div class="border-t border-slate-500 my-8"></div>
+            
+            <!-- Bottom Section -->
+            <div class="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+                <div class="text-center md:text-left">
+                    <p class="text-blue-100 text-sm">
+                        Empowering India through Digital Skill Development
+                    </p>
+                </div>
+                <div class="text-center md:text-right">
+                    <p class="text-slate-300 text-sm">© 2025 Government of India. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function speak(text) {
+            const speech = new SpeechSynthesisUtterance(text);
+            speech.lang = 'en-US';
+            speech.rate = 0.8; // Slower speech for better understanding
+            speech.volume = 0.8;
+            window.speechSynthesis.speak(speech);
+        }
+
+        // Form validation and submission
+        document.getElementById('userForm').addEventListener('submit', function(e) {
+            // e.preventDefault();
+            
+            const name = document.getElementById('name').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const city = document.getElementById('city').value.trim();
+            
+            if (!name || !phone || !city) {
+                speak('Please fill all required fields');
+                return;
+            }
+            
+            if (!/^[0-9]{10}$/.test(phone)) {
+                speak('Please enter a valid 10-digit mobile number');
+                return;
+            }
+            
+            // Simulate form submission
+            speak('Thank you for registering. Your details have been submitted successfully.');
+            
+            // You can add actual form submission logic here
+            console.log('Registration Data:', { name, phone, city });
+        });
+    </script>
+</body>
+</html>

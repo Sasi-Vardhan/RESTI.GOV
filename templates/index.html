@@ -1,0 +1,288 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Rural Income Portal{% endblock %}
+
+{% block content %}
+<style>
+    body {
+        background-color: #ffffff;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: auto;
+        padding: 1.5rem;
+    }
+
+    .page-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .page-header h1 {
+        font-size: 2rem;
+        color: #2c3e50;
+        margin-bottom: 0.5rem;
+    }
+
+    .page-header small {
+        display: block;
+        font-size: 1rem;
+        color: #555;
+    }
+
+    .language-selector {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .language-btn {
+        padding: 0.5rem 1rem;
+        margin: 0.2rem;
+        background-color: #f0f0f0;
+        border-radius: 5px;
+        text-decoration: none;
+        color: #333;
+        font-weight: bold;
+    }
+
+    .language-btn.active {
+        background-color: #3498db;
+        color: white;
+    }
+
+    .cards-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 2rem;
+        justify-content: center;
+    }
+
+    .card {
+        background: #fafafa;
+        padding: 1.5rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.07);
+        text-align: center;
+        width: 300px;
+        transition: transform 0.3s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+    }
+
+    .card img {
+        width: 100px;
+        height: 100px;
+        object-fit: contain;
+        margin-bottom: 1rem;
+    }
+
+    .card h3 {
+        color: #2c3e50;
+        margin-bottom: 0.5rem;
+    }
+
+    .card p {
+        color: #555;
+        font-size: 0.95rem;
+    }
+
+    .btn-primary {
+        display: inline-block;
+        margin-top: 1rem;
+        padding: 0.5rem 1rem;
+        background-color: #2ecc71;
+        color: white;
+        border-radius: 5px;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    @media (max-width: 768px) {
+        .cards-grid {
+            flex-direction: column;
+            align-items: center;
+        }
+    }
+
+    /* Footer Styling */
+    .footer {
+        background-color: #f5f5f5;
+        padding: 2rem 1rem;
+        text-align: center;
+        margin-top: 4rem;
+        border-top: 1px solid #ddd;
+    }
+
+    .footer h4 {
+        margin-bottom: 1rem;
+        color: #333;
+    }
+
+    .footer .gov-icons {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        flex-wrap: wrap;
+        margin-bottom: 1rem;
+    }
+
+    .footer .gov-icons img {
+        height: 50px;
+        width: auto;
+        filter: grayscale(60%);
+        transition: filter 0.3s ease;
+    }
+
+    .footer .gov-icons img:hover {
+        filter: none;
+    }
+
+    .footer .credit {
+        font-size: 0.85rem;
+        color: #777;
+    }
+    @media (max-width: 768px) {
+        .container {
+            padding: 0.8rem;
+        }
+
+        .cards-grid {
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .card {
+            max-width: 90%;
+        }
+
+        .page-header h1 {
+            font-size: clamp(1.2rem, 5vw, 1.5rem);
+        }
+
+        .page-header small {
+            font-size: clamp(0.7rem, 3vw, 0.8rem);
+        }
+
+        .language-selector {
+            gap: 0.3rem;
+        }
+
+        .language-btn {
+            padding: 0.4rem 0.8rem;
+            font-size: clamp(0.75rem, 3vw, 0.85rem);
+        }
+
+        .btn-primary {
+            padding: 0.5rem 1rem;
+            max-width: 100%;
+        }
+        .footer {
+            padding: 1rem 0.8rem;
+        }
+
+        .footer .gov-icons {
+            gap: 0.8rem;
+        }
+
+        .footer .gov-icons img {
+            height: 35px;
+        }
+        }
+
+    @media (max-width: 480px) {
+        .card img {
+            width: 60px;
+            height: 60px;
+        }
+
+        .card {
+            padding: 0.8rem;
+        }
+
+        .btn-primary {
+            font-size: clamp(0.8rem, 3.5vw, 0.9rem);
+        }
+
+        .footer .gov-icons img {
+            height: 30px;
+        }
+    }
+</style>
+
+<div class="container">
+    <div class="page-header">
+        <h1>
+            {{ content.page_title }}
+            <br>
+            <small>{{ content.govt_subtitle }}</small>
+        </h1>
+    </div>
+
+    <div class="language-selector">
+        {% for lang_key, lang_data in languages.items() %}
+            <a href="{{ url_for('set_language', language=lang_key) }}"
+               class="language-btn {% if current_lang == lang_key %}active{% endif %}">
+                {{ lang_data.native }}
+            </a>
+        {% endfor %}
+    </div>
+
+    <div class="cards-grid">
+        <!-- Farmer -->
+        <div class="card">
+            <img src="{{ url_for('static', filename='images/farmer.png') }}" alt="Farmer">
+            <h3>{{ content.farmer_title }}</h3>
+            <p>{{ content.farmer_description }}</p>
+           <form action="/" method="post">
+    <button type="submit" name="user_type" value="farmer" class="btn-primary">{{ content.get_started }}</button>
+</form>
+        </div
+
+        <!-- Housewife -->
+        <div class="card">
+            <img src="{{ url_for('static', filename='images/housewife.png') }}" alt="Housewife">
+            <h3>{{ content.housewife_title }}</h3>
+            <p>{{ content.housewife_description }}</p>
+           <form action="/" method="post">
+    <button type="submit" name="user_type" value="housewife" class="btn-primary">{{ content.get_started }}</button>
+</form>
+        </div>
+
+        <!-- Village Youth -->
+        <div class="card">
+            <img src="{{ url_for('static', filename='images/youth.png') }}" alt="Village Youth">
+            <h3>{{ content.village_youth_title }}</h3>
+            <p>{{ content.village_youth_description }}</p>
+            <form action="/" method="post">
+    <button type="submit" name="user_type" value="youth" class="btn-primary">{{ content.get_started }}</button>
+</form>
+        </div>
+    </div>
+</div>
+
+<!-- Footer Section -->
+<footer class="footer">
+    <div class="container">
+        <h4>Explore Official Government Resources</h4>
+        <div class="gov-icons">
+            <a href="https://nrega.nic.in/" target="_blank" title="MGNREGA Official Site">
+                <img src="{{ url_for('static', filename='images/mangrega.jpg') }}" alt="MGNREGA">
+            </a>
+            <a href="https://aajeevika.gov.in/" target="_blank" title="DAY-NRLM Official Site">
+                <img src="{{ url_for('static', filename='images/aajeevika-logo.webp') }}" alt="DAY-NRLM">
+            </a>
+            <a href="https://pmayg.nic.in/" target="_blank" title="PMAY-G Official Site">
+                <img src="{{ url_for('static', filename='images/Pmayg.png') }} " alt="PMAY-G">
+            </a>
+        </div>
+        <p class="credit">© 2025 | Rural Income Support | Government of India Initiative</p>
+    </div>
+</footer>
+{% endblock %}
