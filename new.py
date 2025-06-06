@@ -61,7 +61,7 @@ def parallel_translate(text_dict, lang_code):
 def index():
     sdict=dict(session)
     for key, value in sdict.items():
-        if(key != 'L' or key != 'Language' or key != 'category'):
+        if(key != 'L' and key != 'language' and key != 'category'):
             session.pop(key)
     if(request.method == "POST"):
         user_type = request.form.get("user_type", "none")
