@@ -94,7 +94,7 @@ def show_skills():
     category = session.get('category', 'youth')  # Default to 'youth'
     lang = session.get('language', 'english')
     lang_code = LANGUAGES.get(lang, {'code': 'en'})['code']
-    print(category)
+    # print(category)
     # Select skills based on category
     if category == 'farmer':
         raw_skills = farmer_skills
@@ -132,7 +132,7 @@ def show_skills():
     if request.method == 'POST':
         selected_skill = request.form.get('skill')
         session["selected_skill"]=selected_skill
-        print(f"Selected skill: {selected_skill} for category: {category}")
+        # print(f"Selected skill: {selected_skill} for category: {category}")
         # Placeholder: Redirect or process the selected skill
         return redirect(url_for('quiz.quiz'))  # Update with desired route
 
