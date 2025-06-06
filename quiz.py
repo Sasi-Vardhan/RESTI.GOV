@@ -13,8 +13,8 @@ quiz_bp = Blueprint('quiz', __name__, template_folder='templates')
 
 
 # Configure logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+# logging.basicConfig(level=logging.INFO)
+# logger = logging.getLogger(__name__)
 
 # Skill names mapping
 SKILL_NAMES = {
@@ -41,11 +41,11 @@ def clear_session_on_navigation():
 def load_quiz_data(skill):
     """Load quiz questions from the corresponding CSV file."""
     if skill not in csv_files:
-        logger.error(f"Invalid skill: {skill}")
+        # logger.error(f"Invalid skill: {skill}")
         return None
     file_path = csv_files[skill]
     if not os.path.exists(file_path):
-        logger.error(f"CSV file not found: {file_path}")
+        # logger.error(f"CSV file not found: {file_path}")
         return None
     questions = []
     try:
@@ -54,7 +54,7 @@ def load_quiz_data(skill):
             for row in reader:
                 options = row['Options'].split(';')
                 if len(options) != 4:
-                    logger.warning(f"Skipping malformed row in {file_path}: {row}")
+                    # logger.warning(f"Skipping malformed row in {file_path}: {row}")
                     continue
                 question_data = {
                     'question': row['Question'],
@@ -69,14 +69,14 @@ def load_quiz_data(skill):
         # print(questions)
         return questions
     except Exception as e:
-        logger.error(f"Error reading CSV {file_path}: {e}")
+        # logger.error(f"Error reading CSV {file_path}: {e}")
         return None
 
 @quiz_bp.route('/quiz', methods=['GET', 'POST'])
 def quiz():
     # Check if selected_skill is in session
     if 'selected_skill' not in session or session['selected_skill'] not in SKILL_NAMES:
-        logger.info("No selected skill in session, redirecting to index")
+        # logger.info("No selected skill in session, redirecting to index")
         session.clear()  # Clear all session variables
         return redirect(url_for('index'))
 
@@ -104,18 +104,18 @@ def quiz():
         if 'answer' in request.form:
             # User submitted an answer
             user_answer = request.form.get('answer').strip()
-            print(user_answer)
+            # print(user_answer)
             correct_answer = questions[current_question_index]['correct_answer']
-            print(correct_answer)
+            # print(correct_answer)
             session['answered'] = True
             if user_answer[3:] == correct_answer[3:]:
-                print("OK")
+                # print("OK")
                 session['score'] = session.get('score', 0) + 1  # Increment score
                 session['feedback'] = 'Correct!'
-                logger.info(f"Correct answer for question {current_question_index + 1} in {skill}")
+                # logger.info(f"Correct answer for question {current_question_index + 1} in {skill}")
             else:
                 session['feedback'] = 'Incorrect!'
-                logger.info(f"Incorrect answer for question {current_question_index + 1} in {skill}")
+                # logger.info(f"Incorrect answer for question {current_question_index + 1} in {skill}")
             session['correct_answer'] = correct_answer
             session['explanation'] = questions[current_question_index]['explanation']
         elif 'next' in request.form:
@@ -127,7 +127,7 @@ def quiz():
             session['explanation'] = ''
             if session['current_question'] >= session['total_questions']:
                 # Quiz completed, redirect to feed.forms without clearing session
-                logger.info(f"Quiz completed for {skill}, score: {session['score']}")
+                # logger.info(f"Quiz completed for {skill}, score: {session['score']}")
                 return redirect(url_for('forms.reg'))
         session.modified = True
         return redirect(url_for('quiz.quiz'))
@@ -155,5 +155,5 @@ def quiz():
 def index():
     """Main page, clears all session variables."""
     session.clear()  # Clear all session variables
-    logger.info("Cleared all session variables on index access")
+    # logger.info("Cleared all session variables on index access")
     return render_template('index.html', skills=SKILL_NAMES)
