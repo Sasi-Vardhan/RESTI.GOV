@@ -89,7 +89,7 @@ def parallel_translate(text_dict, lang_code):
 def show_skills():
     sdict=dict(session)
     for key, value in sdict.items():
-        if(key != 'L' or key != 'Language' or key != 'category' or key != 'selected_skill'):
+        if(key != 'L' and key != 'language' and key != 'category' and key != 'selected_skill'):
             session.pop(key)
     category = session.get('category', 'youth')  # Default to 'youth'
     lang = session.get('language', 'english')
