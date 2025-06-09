@@ -13,6 +13,11 @@
         color: #333;
     }
 
+    /* Prevent scrolling when modal is active */
+    body.modal-active {
+        overflow: hidden;
+    }
+
     /* Tricolor Header Stripe */
     .tricolor-stripe {
         height: 6px;
@@ -86,6 +91,74 @@
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     }
 
+    /* Video Modal Styling */
+    .video-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.85); /* Slightly darker overlay */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        visibility: hidden;
+        opacity: 0;
+        transition: visibility 0s, opacity 0.3s ease;
+    }
+
+    .video-modal.active {
+        visibility: visible;
+        opacity: 1;
+    }
+
+    .modal-content {
+        position: relative;
+        width: 90%;
+        max-width: 800px;
+        background: #fff;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        text-align: center;
+    }
+
+    .modal-video-container {
+        position: relative;
+        width: 100%;
+        padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+        margin-bottom: 1rem;
+    }
+
+    .modal-video-container video {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border-radius: 8px;
+    }
+
+    .skip-button {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: #ff9933;
+        color: white;
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 20px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.3s ease;
+    }
+
+    .skip-button:hover {
+        background: #e68a00;
+    }
+
     /* New Government Initiatives Section */
     .gov-initiatives {
         margin-bottom: 2rem;
@@ -111,7 +184,7 @@
         margin-bottom: 1.5rem;
     }
 
-    /* Video Container Styling */
+    /* Video Container Styling (for in-page video) */
     .video-container {
         position: relative;
         width: 100%;
@@ -303,6 +376,16 @@
             font-size: clamp(0.85rem, 2.5vw, 1rem);
         }
 
+        .modal-content {
+            width: 90%;
+            padding: 1rem;
+        }
+
+        .skip-button {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.9rem;
+        }
+
         .gov-initiatives {
             padding: 1rem;
         }
@@ -392,6 +475,18 @@
             padding: 0.5rem 1rem;
             font-size: clamp(0.8rem, 2.2vw, 0.9rem);
             min-width: 70px;
+        }
+
+        .modal-content {
+            width: 95%;
+            padding: 0.8rem;
+        }
+
+        .skip-button {
+            padding: 0.3rem 0.7rem;
+            font-size: 0.85rem;
+            top: 8px;
+            right: 8px;
         }
 
         .gov-initiatives {
@@ -502,6 +597,18 @@
             min-width: 60px;
         }
 
+        .modal-content {
+            width: 98%;
+            padding: 0.6rem;
+        }
+
+        .skip-button {
+            padding: 0.3rem 0.6rem;
+            font-size: 0.8rem;
+            top: 6px;
+            right: 6px;
+        }
+
         .gov-initiatives {
             padding: 0.6rem;
             margin-bottom: 1rem;
@@ -576,6 +683,20 @@
         }
     }
 </style>
+
+<!-- Video Modal -->
+<div class="video-modal" id="videoModal">
+    <div class="modal-content">
+        <button class="skip-button" id="skipButton">Skip</button>
+        <div class="modal-video-container">
+            <video id="introVideo" autoplay muted controls>
+                <source src="{{ url_for('static', filename='videos/introduction.mp4') }}" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+        <p id="errorMessage" style="color: red; display: none;">Error: Video failed to load or play. Please skip to continue.</p>
+    </div>
+</div>
 
 <!-- Tricolor Stripe at the Top -->
 <div class="tricolor-stripe"></div>
@@ -669,4 +790,72 @@
         <p class="credit">© 2025 | Rural Income Support | Government of India Initiative</p>
     </div>
 </footer>
+
+<!-- JavaScript to Control Modal -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        console.log('DOM fully loaded, initializing video modal...');
+
+        const modal = document.getElementById('videoModal');
+        const video = document.getElementById('introVideo');
+        const skipButton = document.getElementById('skipButton');
+        const errorMessage = document.getElementById('errorMessage');
+        const body = document.body;
+
+        // Function to show modal
+        const showModal = () => {
+            console.log('Showing video modal...');
+            modal.classList.add('active');
+            body.classList.add('modal-active'); // Prevent scrolling
+            // Attempt to play the video automatically
+            video.play().then(() => {
+                console.log('Video playback started successfully.');
+            }).catch((error) => {
+                console.error('Video playback failed:', error);
+                errorMessage.style.display = 'block';
+            });
+        };
+
+        // Function to hide modal
+        const hideModal = () => {
+            console.log('Hiding video modal...');
+            modal.classList.remove('active');
+            body.classList.remove('modal-active'); // Re-enable scrolling
+            video.pause(); // Ensure video is paused
+            video.currentTime = 0; // Reset video to start
+        };
+
+        // Show modal on page load
+        showModal();
+
+        // Close modal when video ends
+        video.addEventListener('ended', () => {
+            console.log('Video ended, closing modal...');
+            hideModal();
+        });
+
+        // Close modal when skip button is clicked
+        skipButton.addEventListener('click', () => {
+            console.log('Skip button clicked, closing modal...');
+            hideModal();
+        });
+
+        // Handle video load errors
+        video.addEventListener('error', (e) => {
+            console.error('Video load error:', e);
+            errorMessage.style.display = 'block';
+        });
+
+        // Prevent page interaction while modal is active
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                console.log('Clicked outside modal content, preventing close...');
+                e.stopPropagation();
+            }
+        });
+
+        // Log video source for debugging
+        console.log('Video source URL:', video.querySelector('source').src);
+    });
+</script>
 {% endblock %}
