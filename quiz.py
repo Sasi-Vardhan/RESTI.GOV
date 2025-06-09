@@ -37,24 +37,24 @@ def clear_session_on_navigation():
     exempt_endpoints = {'quiz.quiz', 'static', 'forms.reg'}
     if request.endpoint and request.endpoint not in exempt_endpoints:
         session.clear()
-        logger.info("Cleared session on navigation")
+        # logger.info("Cleared session on navigation")
 
 def translate_field(field, text, target_lang_code):
     """Translate a single text field to the target language."""
     try:
         if text and target_lang_code != 'en':
-            logger.debug(f"Translating {field}: {text} to {target_lang_code}")
+            # logger.debug(f"Translating {field}: {text} to {target_lang_code}")
             translated_text = GoogleTranslator(source='en', target=target_lang_code).translate(text)
             return field, translated_text
         return field, text
     except Exception as e:
-        logger.error(f"Translation error for {field}: {text} to {target_lang_code}: {e}")
+        # logger.error(f"Translation error for {field}: {text} to {target_lang_code}: {e}")
         return field, text
 
 def translator(questions):
     """Translate all fields of all questions using multithreading."""
     if 'language' not in session or session['language'] not in LANGUAGES:
-        logger.warning(f"No valid language in session, defaulting to English. Session: {session}")
+        # logger.warning(f"No valid language in session, defaulting to English. Session: {session}")
         session['language'] = 'english'
         target_lang_code = 'en'
     else:
@@ -75,25 +75,25 @@ def translator(questions):
                 try:
                     field, translated_text = future.result()
                     translated_data[field] = translated_text
-                    logger.debug(f"Translated {field}: {translated_text}")
+                    # logger.debug(f"Translated {field}: {translated_text}")
                 except Exception as e:
-                    logger.error(f"Failed to retrieve translation for {field}: {e}")
+                    # logger.error(f"Failed to retrieve translation for {field}: {e}")
         translated_questions.append(translated_data)
     return translated_questions
 
 def load_quiz_data(skill):
     """Load quiz questions from the corresponding CSV file and translate them if not cached."""
     if skill not in csv_files:
-        logger.error(f"Invalid skill: {skill}")
+        # logger.error(f"Invalid skill: {skill}")
         return None
     file_path = csv_files[skill]
     logger.info(f"Resolved CSV file path: {os.path.abspath(file_path)}")
     if not os.path.exists(file_path):
-        logger.error(f"CSV file not found: {file_path}")
+        # logger.error(f"CSV file not found: {file_path}")
         return None
 
     if 'translated_questions' in session and session.get('current_skill') == skill:
-        logger.info("Using cached translated questions")
+        # logger.info("Using cached translated questions")
         return session['translated_questions']
 
     questions = []
@@ -103,7 +103,7 @@ def load_quiz_data(skill):
             for row in reader:
                 options = row['Options'].split(';')
                 if len(options) != 4:
-                    logger.warning(f"Skipping malformed row in {file_path}: {row}")
+                    # logger.warning(f"Skipping malformed row in {file_path}: {row}")
                     continue
                 question_data = {
                     'question': row['Question'].strip(),
@@ -115,9 +115,9 @@ def load_quiz_data(skill):
                     'explanation': row['Explanation Why Correct Answer is Good'].strip()
                 }
                 questions.append(question_data)
-                logger.debug(f"Loaded question: {question_data}")
+                # logger.debug(f"Loaded question: {question_data}")
     except Exception as e:
-        logger.error(f"Error reading CSV {file_path}: {e}")
+        # logger.error(f"Error reading CSV {file_path}: {e}")
         return None
 
     if not questions:
@@ -196,12 +196,12 @@ def quiz():
                 logger.info(f"Quiz completed for {skill}, score: {session['score']}")
                 return redirect(url_for('forms.reg'))
         session.modified = True
-        logger.debug(f"Session after POST: {session}")
+        # logger.debug(f"Session after POST: {session}")
         return redirect(url_for('quiz.quiz'))
 
     if current_question_index < session['total_questions']:
         question_data = questions[current_question_index]
-        logger.debug(f"Rendering question {current_question_index + 1}: {question_data}")
+        # logger.debug(f"Rendering question {current_question_index + 1}: {question_data}")
         return render_template(
             'quiz.html',
             question=question_data,
