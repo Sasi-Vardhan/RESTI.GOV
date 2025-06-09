@@ -1,0 +1,6 @@
+{
+  "name": "my-flask-app",
+  "scripts": {
+    "start": "gunicorn app:app"
+  }
+}
