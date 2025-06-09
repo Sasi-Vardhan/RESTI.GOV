@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ skill_name }} Quiz - Government of India</title>
+    <title data-translate="title">{{ skill_name }} Quiz - Government of India</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
@@ -26,6 +26,28 @@
                 font-size: 0.875rem;
             }
         }
+
+        /* Loading spinner styles */
+        .loading-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 50vh;
+        }
+
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left: 4px solid #007bff;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen flex flex-col">
@@ -35,59 +57,65 @@
     <!-- Header -->
     <header class="bg-blue-600 text-white py-6">
         <div class="container mx-auto px-4 text-center">
-            <h1 class="text-3xl sm:text-4xl font-bold">{{ skill_name }} Quiz</h1>
-            <p class="text-lg mt-2">Government of India - Skill Development Program</p>
+            <h1 class="text-3xl sm:text-4xl font-bold" data-translate="header">{{ skill_name }} Quiz</h1>
+            <p class="text-lg mt-2" data-translate="header-subtitle">Government of India - Skill Development Program</p>
         </div>
     </header>
 
-    <!-- Main Content -->
+    <!-- Main Content with Loading State -->
     <main class="flex-grow flex items-center justify-center px-4 py-8">
-        <div class="bg-white p-6 sm:p-8 rounded-lg shadow-lg w-full max-w-4xl">
-            <h3 class="text-xl text-gray-600 mb-6">Question {{ question_number }} of {{ total_questions }}</h3>
+        <!-- Loading Spinner -->
+        <div id="loading" class="loading-container">
+            <div class="spinner"></div>
+        </div>
+
+        <!-- Quiz Content (Initially Hidden) -->
+        <div id="quiz-content" class="bg-white p-6 sm:p-8 rounded-lg shadow-lg w-full max-w-4xl hidden">
+            <h3 class="text-xl text-gray-600 mb-6" data-translate="question-counter">Question {{ question_number }} of {{ total_questions }}</h3>
             
-            <p class="text-lg sm:text-xl mb-8 text-gray-800 font-medium leading-relaxed">{{ question.question }}</p>
+            <p class="text-lg sm:text-xl mb-8 text-gray-800 font-medium leading-relaxed" data-translate="question">{{ question.question }}</p>
             
             <form id="quiz-form" method="POST" action="{{ url_for('quiz.quiz') }}" class="space-y-4">
                 <div class="space-y-3">
                     <label class="option-label flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer">
                         <input type="radio" name="answer" value="{{ question.option1 }}" {% if answered %}disabled{% endif %} class="mr-4 h-5 w-5 text-blue-600" required> 
-                        <span class="text-lg text-gray-700">A) {{ question.option1 }}</span>
+                        <span class="text-lg text-gray-700" data-translate="option1">A) {{ question.option1 }}</span>
                     </label>
                     <label class="option-label flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer">
                         <input type="radio" name="answer" value="{{ question.option2 }}" {% if answered %}disabled{% endif %} class="mr-4 h-5 w-5 text-blue-600"> 
-                        <span class="text-lg text-gray-700">B) {{ question.option2 }}</span>
+                        <span class="text-lg text-gray-700" data-translate="option2">B) {{ question.option2 }}</span>
                     </label>
                     <label class="option-label flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer">
                         <input type="radio" name="answer" value="{{ question.option3 }}" {% if answered %}disabled{% endif %} class="mr-4 h-5 w-5 text-blue-600"> 
-                        <span class="text-lg text-gray-700">C) {{ question.option3 }}</span>
+                        <span class="text-lg text-gray-700" data-translate="option3">C) {{ question.option3 }}</span>
                     </label>
                     <label class="option-label flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer">
                         <input type="radio" name="answer" value="{{ question.option4 }}" {% if answered %}disabled{% endif %} class="mr-4 h-5 w-5 text-blue-600"> 
-                        <span class="text-lg text-gray-700">D) {{ question.option4 }}</span>
+                        <span class="text-lg text-gray-700" data-translate="option4">D) {{ question.option4 }}</span>
                     </label>
                 </div>
                 
                 {% if not answered %}
                     <div class="text-center mt-8">
-                        <button type="submit" class="bg-blue-600 text-white px-12 py-3 rounded-lg hover:bg-blue-700 transition duration-200 font-semibold text-lg">Submit Answer</button>
+                        <button type="submit" class="bg-blue-600 text-white px-12 py-3 rounded-lg hover:bg-blue-700 transition duration-200 font-semibold text-lg" data-translate="submit-button">Submit Answer</button>
                     </div>
                 {% endif %}
             </form>
             
             {% if answered %}
                 <div class="mt-6 p-6 {% if feedback == 'Correct!' %}bg-green-50 border-green-500{% else %}bg-red-50 border-red-500{% endif %} border-l-4 rounded-r-lg">
-                    <p class="text-xl font-semibold {% if feedback == 'Correct!' %}text-green-700{% else %}text-red-700{% endif %} mb-3">{{ feedback }}</p>
-                    <p class="text-lg text-gray-700 mb-2">Correct Answer: {{ correct_answer }}</p>
-                    <p class="text-gray-700">{{ explanation }}</p>
+                    <p class="text-xl font-semibold {% if feedback == 'Correct!' %}text-green-700{% else %}text-red-700{% endif %} mb-3" data-translate="feedback">{{ feedback }}</p>
+                    <p class="text-lg text-gray-700 mb-2" data-translate="correct-answer">Correct Answer: {{ correct_answer }}</p>
+                    <p class="text-gray-700" data-translate="explanation">{{ explanation }}</p>
                 </div>
                 <form method="POST" action="{{ url_for('quiz.quiz') }}" class="mt-6 text-center">
                     <input type="hidden" name="next" value="true">
-                    <button type="submit" class="bg-gray-600 text-white px-12 py-3 rounded-lg hover:bg-gray-700 transition duration-200 font-semibold text-lg">Next Question</button>
+                    <button type="submit" class="bg-gray-600 text-white px-12 py-3 rounded-lg hover:bg-gray-700 transition duration-200 font-semibold text-lg" data-translate="next-button">Next Question</button>
                 </form>
             {% endif %}
             
             <div class="text-center mt-6">
-                <a href="{{ url_for('select_skills.show_skills') }}" class="text-blue-600 hover:underline font-semibold">Change Skill</a>
+                <a href="{{ url_for('select_skills.show_skills') }}" class="text-blue-600 hover:underline font-semibold" data-translate="change-skill">Change Skill</a>
             </div>
         </div>
     </main>
@@ -103,8 +131,8 @@
                     <div class="bg-white p-3 rounded-full mb-4 shadow-lg">
                         <img src="static/images/govt-logo.png" alt="Government of India" class="w-12 h-12">
                     </div>
-                    <h3 class="text-xl font-bold text-white mb-2">Government of India</h3>
-                    <p class="text-blue-200 text-sm font-medium">Skill Initiative Program</p>
+                    <h3 class="text-xl font-bold text-white mb-2" data-translate="footer-govt">Government of India</h3>
+                    <p class="text-blue-200 text-sm font-medium" data-translate="footer-govt-subtitle">Skill Initiative Program</p>
                 </div>
                 
                 <!-- Ashoka Lion Capital Section -->
@@ -112,8 +140,8 @@
                     <div class="bg-white p-3 rounded-full mb-4 shadow-lg">
                         <img src="static/images/ashoka-emblem.jpg" alt="Ashoka Lion Capital" class="w-16 h-16">
                     </div>
-                    <p class="text-amber-300 text-lg font-semibold tracking-wide">सत्यमेव जयते</p>
-                    <p class="text-blue-200 text-sm mt-1">Truth Alone Triumphs</p>
+                    <p class="text-amber-300 text-lg font-semibold tracking-wide" data-translate="footer-motto">सत्यमेव जयते</p>
+                    <p class="text-blue-200 text-sm mt-1" data-translate="footer-motto-subtitle">Truth Alone Triumphs</p>
                 </div>
                 
                 <!-- Ministry Section -->
@@ -121,8 +149,8 @@
                     <div class="bg-white p-2 rounded mb-4 shadow-lg">
                         <img src="static/images/indian-flag.webp" alt="Indian Flag" class="w-16 h-10">
                     </div>
-                    <h4 class="text-lg font-semibold text-white mb-1">Ministry of Skill Development</h4>
-                    <p class="text-blue-200 text-sm">& Entrepreneurship</p>
+                    <h4 class="text-lg font-semibold text-white mb-1" data-translate="footer-ministry">Ministry of Skill Development</h4>
+                    <p class="text-blue-200 text-sm" data-translate="footer-ministry-subtitle">& Entrepreneurship</p>
                 </div>
             </div>
             
@@ -132,15 +160,261 @@
             <!-- Bottom Section -->
             <div class="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
                 <div class="text-center md:text-left">
-                    <p class="text-blue-100 text-sm">
-                        Empowering India through Digital Skill Development
-                    </p>
+                    <p class="text-blue-100 text-sm" data-translate="footer-empower">Empowering India through Digital Skill Development</p>
                 </div>
                 <div class="text-center md:text-right">
-                    <p class="text-slate-300 text-sm">© 2025 Government of India. All rights reserved.</p>
+                    <p class="text-slate-300 text-sm" data-translate="footer-copyright">© 2025 Government of India. All rights reserved.</p>
                 </div>
             </div>
         </div>
     </footer>
+
+    <!-- JavaScript for Client-Side Translation -->
+    <script>
+        // Language passed from the backend
+        const targetLang = '{{ language }}';
+        
+        // Language code mapping
+        const languageCodes = {
+            'english': 'en',
+            'hindi': 'hi',
+            'tamil': 'ta',
+            'telugu': 'te'
+        };
+
+        // Static UI translations (fallback if API fails)
+        const uiTranslations = {
+            'english': {
+                'title': '{{ skill_name }} Quiz - Government of India',
+                'header': '{{ skill_name }} Quiz',
+                'header-subtitle': 'Government of India - Skill Development Program',
+                'question-counter': 'Question {{ question_number }} of {{ total_questions }}',
+                'question': '{{ question.question }}',
+                'option1': 'A) {{ question.option1 }}',
+                'option2': 'B) {{ question.option2 }}',
+                'option3': 'C) {{ question.option3 }}',
+                'option4': 'D) {{ question.option4 }}',
+                'submit-button': 'Submit Answer',
+                'feedback': '{{ feedback }}',
+                'correct-answer': 'Correct Answer: {{ correct_answer }}',
+                'explanation': '{{ explanation }}',
+                'next-button': 'Next Question',
+                'change-skill': 'Change Skill',
+                'footer-govt': 'Government of India',
+                'footer-govt-subtitle': 'Skill Initiative Program',
+                'footer-motto': 'सत्यमेव जयते',
+                'footer-motto-subtitle': 'Truth Alone Triumphs',
+                'footer-ministry': 'Ministry of Skill Development',
+                'footer-ministry-subtitle': '& Entrepreneurship',
+                'footer-empower': 'Empowering India through Digital Skill Development',
+                'footer-copyright': '© 2025 Government of India. All rights reserved.'
+            },
+            'hindi': {
+                'title': '{{ skill_name }} प्रश्नोत्तरी - भारत सरकार',
+                'header': '{{ skill_name }} प्रश्नोत्तरी',
+                'header-subtitle': 'भारत सरकार - कौशल विकास कार्यक्रम',
+                'question-counter': 'प्रश्न {{ question_number }} का {{ total_questions }}',
+                'submit-button': 'उत्तर जमा करें',
+                'next-button': 'अगला प्रश्न',
+                'change-skill': 'कौशल बदलें',
+                'footer-govt': 'भारत सरकार',
+                'footer-govt-subtitle': 'कौशल पहल कार्यक्रम',
+                'footer-motto': 'सत्यमेव जयते',
+                'footer-motto-subtitle': 'सत्य की ही जीत होती है',
+                'footer-ministry': 'कौशल विकास मंत्रालय',
+                'footer-ministry-subtitle': 'और उद्यमिता',
+                'footer-empower': 'डिजिटल कौशल विकास के माध्यम से भारत को सशक्त बनाना',
+                'footer-copyright': '© 2025 भारत सरकार। सभी अधिकार सुरक्षित।'
+            },
+            'tamil': {
+                'title': '{{ skill_name }} வினாடி வினா - இந்திய அரசு',
+                'header': '{{ skill_name }} வினாடி வினா',
+                'header-subtitle': 'இந்திய அரசு - திறன் மேம்பாட்டு திட்டம்',
+                'question-counter': 'கேள்வி {{ question_number }} இல் {{ total_questions }}',
+                'submit-button': 'பதிலை சமர்ப்பிக்கவும்',
+                'next-button': 'அடுத்த கேள்வி',
+                'change-skill': 'திறனை மாற்றவும்',
+                'footer-govt': 'இந்திய அரசு',
+                'footer-govt-subtitle': 'திறன் முன்முயற்சி திட்டம்',
+                'footer-motto': 'சத்யமேவ ஜயதே',
+                'footer-motto-subtitle': 'உண்மை மட்டுமே வெற்றி பெறும்',
+                'footer-ministry': 'திறன் மேம்பாட்டு அமைச்சகம்',
+                'footer-ministry-subtitle': 'மற்றும் தொழில்முனைவு',
+                'footer-empower': 'டிஜிட்டல் திறன் மேம்பாட்டின் மூலம் இந்தியாவை மேம்படுத்துதல்',
+                'footer-copyright': '© 2025 இந்திய அரசு. அனைத்து உரிமைகளும் பாதுகாக்கப்பட்டவை.'
+            },
+            'telugu': {
+                'title': '{{ skill_name }} క్విజ్ - భారత ప్రభుత్వం',
+                'header': '{{ skill_name }} క్విజ్',
+                'header-subtitle': 'భారత ప్రభుత్వం - నైపుణ్య అభివృద్ధి కార్యక్రమం',
+                'question-counter': 'ప్రశ్న {{ question_number }} ఆఫ్ {{ total_questions }}',
+                'submit-button': 'సమాధానం సమర్పించండి',
+                'next-button': 'తదుపరి ప్రశ్న',
+                'change-skill': 'నైపుణ్యాన్ని మార్చండి',
+                'footer-govt': 'భారత ప్రభుత్వం',
+                'footer-govt-subtitle': 'నైపుణ్య చొరవ కార్యక్రమం',
+                'footer-motto': 'సత్యమేవ జయతే',
+                'footer-motto-subtitle': 'సత్యమే జయిస్తుంది',
+                'footer-ministry': 'నైపుణ్య అభివృద్ధి మంత్రిత్వ శాఖ',
+                'footer-ministry-subtitle': 'మరియు వ్యవస్థాపకత',
+                'footer-empower': 'డిజిటల్ నైపుణ్య అభివృద్ధి ద్వారా భారతదేశాన్ని సాధికారపరచడం',
+                'footer-copyright': '© 2025 భారత ప్రభుత్వం. అన్ని హక్కులు రిజర్వ్ చేయబడ్డాయి.'
+            }
+        };
+
+        // Initialize translation cache from localStorage
+        const translationCache = JSON.parse(localStorage.getItem('translationCache') || '{}');
+
+        // Function to translate text using MyMemory API
+        async function translateText(texts, targetLangCode) {
+            // Check cache first
+            const uncachedTexts = [];
+            const cachedResults = texts.map((text, index) => {
+                const cacheKey = `${text}_${targetLangCode}`;
+                if (translationCache[cacheKey]) {
+                    return { index, translatedText: translationCache[cacheKey] };
+                }
+                uncachedTexts.push(text);
+                return { index, text };
+            });
+
+            // If all texts are cached, return immediately
+            if (uncachedTexts.length === 0) {
+                return cachedResults.map(result => result.translatedText);
+            }
+
+            // Batch uncached texts into a single request by joining with a delimiter
+            const delimiter = '|||';
+            const batchedText = uncachedTexts.join(delimiter);
+            const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(batchedText)}&langpair=en|${targetLangCode}`;
+            
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                if (data.responseStatus === 200 && data.responseData) {
+                    const translatedBatch = data.responseData.translatedText.split(delimiter);
+                    // Update cache
+                    uncachedTexts.forEach((text, i) => {
+                        const cacheKey = `${text}_${targetLangCode}`;
+                        translationCache[cacheKey] = translatedBatch[i];
+                    });
+                    localStorage.setItem('translationCache', JSON.stringify(translationCache));
+
+                    // Map translated texts back to their original indices
+                    let translatedIndex = 0;
+                    return cachedResults.map(result => {
+                        if (result.translatedText) {
+                            return result.translatedText;
+                        }
+                        return translatedBatch[translatedIndex++];
+                    });
+                }
+                throw new Error('Translation failed');
+            } catch (error) {
+                console.error('Translation error:', error);
+                // Fallback to original texts if translation fails
+                return texts;
+            }
+        }
+
+        // Function to apply translations
+        async function applyTranslations() {
+            const targetLangCode = languageCodes[targetLang] || 'en';
+            
+            // Skip translation if the language is English
+            if (targetLangCode === 'en') {
+                // Show content immediately if no translation is needed
+                document.getElementById('loading').classList.add('hidden');
+                document.getElementById('quiz-content').classList.remove('hidden');
+                return;
+            }
+
+            // Get all elements with data-translate attribute
+            const elements = document.querySelectorAll('[data-translate]');
+            
+            // Collect translations in memory
+            const translationResults = [];
+            const dynamicTexts = [];
+            const dynamicIndices = [];
+
+            for (let i = 0; i < elements.length; i++) {
+                const element = elements[i];
+                const key = element.getAttribute('data-translate');
+                let originalText = element.innerText;
+                
+                // Check if there's a static UI translation
+                if (uiTranslations[targetLang] && uiTranslations[targetLang][key]) {
+                    // Replace placeholders (e.g., {{ skill_name }})
+                    let translatedText = uiTranslations[targetLang][key]
+                        .replace('{{ skill_name }}', '{{ skill_name }}')
+                        .replace('{{ question_number }}', '{{ question_number }}')
+                        .replace('{{ total_questions }}', '{{ total_questions }}')
+                        .replace('{{ question.question }}', '{{ question.question }}')
+                        .replace('{{ question.option1 }}', '{{ question.option1 }}')
+                        .replace('{{ question.option2 }}', '{{ question.option2 }}')
+                        .replace('{{ question.option3 }}', '{{ question.option3 }}')
+                        .replace('{{ question.option4 }}', '{{ question.option4 }}')
+                        .replace('{{ feedback }}', '{{ feedback }}')
+                        .replace('{{ correct_answer }}', '{{ correct_answer }}')
+                        .replace('{{ explanation }}', '{{ explanation }}');
+                    
+                    // Replace placeholders with actual values
+                    translatedText = translatedText
+                        .replace('{{ skill_name }}', '{{ skill_name | safe }}')
+                        .replace('{{ question_number }}', '{{ question_number | safe }}')
+                        .replace('{{ total_questions }}', '{{ total_questions | safe }}')
+                        .replace('{{ question.question }}', '{{ question.question | safe }}')
+                        .replace('{{ question.option1 }}', '{{ question.option1 | safe }}')
+                        .replace('{{ question.option2 }}', '{{ question.option2 | safe }}')
+                        .replace('{{ question.option3 }}', '{{ question.option3 | safe }}')
+                        .replace('{{ question.option4 }}', '{{ question.option4 | safe }}')
+                        .replace('{{ feedback }}', '{{ feedback | safe }}')
+                        .replace('{{ correct_answer }}', '{{ correct_answer | safe }}')
+                        .replace('{{ explanation }}', '{{ explanation | safe }}');
+                    
+                    translationResults[i] = { element, translatedText };
+                    continue;
+                }
+
+                // Add to dynamic translations if there's text to translate
+                if (originalText) {
+                    dynamicTexts.push(originalText);
+                    dynamicIndices.push(i);
+                    translationResults[i] = { element };
+                }
+            }
+
+            // Perform dynamic translations in a single batched request
+            if (dynamicTexts.length > 0) {
+                try {
+                    const translatedTexts = await translateText(dynamicTexts, targetLangCode);
+                    // Map dynamic translations back to their indices
+                    dynamicIndices.forEach((index, i) => {
+                        translationResults[index].translatedText = translatedTexts[i];
+                    });
+                } catch (error) {
+                    console.error('Error during batched translations:', error);
+                    // Fallback to original texts if translation fails
+                    dynamicIndices.forEach((index, i) => {
+                        translationResults[index].translatedText = dynamicTexts[i];
+                    });
+                }
+            }
+
+            // Apply all translations at once
+            translationResults.forEach(result => {
+                if (result && result.translatedText) {
+                    result.element.innerHTML = result.translatedText;
+                }
+            });
+
+            // Hide loading spinner and show quiz content
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('quiz-content').classList.remove('hidden');
+        }
+
+        // Run translation on page load
+        document.addEventListener('DOMContentLoaded', applyTranslations);
+    </script>
 </body>
 </html>
