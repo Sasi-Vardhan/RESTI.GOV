@@ -16,15 +16,39 @@
             background: linear-gradient(to right, #FF9933 33.33%, #FFFFFF 33.33%, #FFFFFF 66.66%, #138808 66.66%);
         }
         
+        .option-label {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            margin-bottom: 1rem; /* Ensure spacing between options */
+            transition: all 0.2s ease;
+        }
+        
         .option-label:hover {
             background-color: #f1f5f9;
             transform: translateX(5px);
-            transition: all 0.2s ease;
+        }
+        
+        .option-prefix {
+            margin-right: 0.5rem;
+            font-weight: 600;
+        }
+        
+        .option-text {
+            flex: 1;
+            line-height: 1.5;
         }
         
         @media (max-width: 640px) {
             .mobile-text-sm {
                 font-size: 0.875rem;
+            }
+            .option-label {
+                padding: 0.75rem;
+                margin-bottom: 0.75rem;
             }
         }
 
@@ -105,22 +129,26 @@
             <p class="text-lg sm:text-xl mb-8 text-gray-800 font-medium leading-relaxed" data-translate="question">{{ question.question }}</p>
             
             <form id="quiz-form" method="POST" action="{{ url_for('quiz.quiz') }}" class="space-y-4">
-                <div class="space-y-3">
-                    <label class="option-label flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer">
+                <div class="space-y-4">
+                    <label class="option-label">
                         <input type="radio" name="answer" value="{{ question.option1 }}" {% if answered %}disabled{% endif %} class="mr-4 h-5 w-5 text-blue-600" required> 
-                        <span class="text-lg text-gray-700" data-translate="option1">{{ question.option1 }}</span>
+                        <span class="option-prefix">A)</span>
+                        <span class="option-text" data-translate="option1">{{ question.option1 }}</span>
                     </label>
-                    <label class="option-label flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer">
+                    <label class="option-label">
                         <input type="radio" name="answer" value="{{ question.option2 }}" {% if answered %}disabled{% endif %} class="mr-4 h-5 w-5 text-blue-600"> 
-                        <span class="text-lg text-gray-700" data-translate="option2">{{ question.option2 }}</span>
+                        <span class="option-prefix">B)</span>
+                        <span class="option-text" data-translate="option2">{{ question.option2 }}</span>
                     </label>
-                    <label class="option-label flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer">
+                    <label class="option-label">
                         <input type="radio" name="answer" value="{{ question.option3 }}" {% if answered %}disabled{% endif %} class="mr-4 h-5 w-5 text-blue-600"> 
-                        <span class="text-lg text-gray-700" data-translate="option3">{{ question.option3 }}</span>
+                        <span class="option-prefix">C)</span>
+                        <span class="option-text" data-translate="option3">{{ question.option3 }}</span>
                     </label>
-                    <label class="option-label flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer">
+                    <label class="option-label">
                         <input type="radio" name="answer" value="{{ question.option4 }}" {% if answered %}disabled{% endif %} class="mr-4 h-5 w-5 text-blue-600"> 
-                        <span class="text-lg text-gray-700" data-translate="option4">{{ question.option4 }}</span>
+                        <span class="option-prefix">D)</span>
+                        <span class="option-text" data-translate="option4">{{ question.option4 }}</span>
                     </label>
                 </div>
                 
@@ -291,64 +319,63 @@
         // Initialize translation cache from localStorage
         let translationCache = JSON.parse(localStorage.getItem('translationCache') || '{}');
 
-        // Function to translate text using MyMemory API
-        async function translateText(texts, targetLangCode) {
-            console.log('Translating texts:', texts, 'to language:', targetLangCode);
+        // Function to translate a single text using MyMemory API
+        async function translateText(text, targetLangCode) {
+            console.log(`Translating text: "${text}" to language: ${targetLangCode}`);
 
             // Check cache first
-            const uncachedTexts = [];
-            const cachedResults = texts.map((text, index) => {
-                const cacheKey = `${text}_${targetLangCode}`;
-                if (translationCache[cacheKey]) {
-                    console.log(`Cache hit for "${text}": ${translationCache[cacheKey]}`);
-                    return { index, translatedText: translationCache[cacheKey] };
-                }
-                uncachedTexts.push(text);
-                return { index, text };
-            });
-
-            // If all texts are cached, return immediately
-            if (uncachedTexts.length === 0) {
-                return cachedResults.map(result => result.translatedText);
+            const cacheKey = `${text}_${targetLangCode}`;
+            if (translationCache[cacheKey]) {
+                console.log(`Cache hit for "${text}": ${translationCache[cacheKey]}`);
+                return translationCache[cacheKey];
             }
 
-            console.log('Uncached texts to translate:', uncachedTexts);
-
-            // Batch uncached texts into a single request by joining with a delimiter
-            const delimiter = '|||';
-            const batchedText = uncachedTexts.join(delimiter);
-            const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(batchedText)}&langpair=en|${targetLangCode}`;
-            
+            // If not in cache, make API call
+            const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|${targetLangCode}`;
             try {
-                console.log('Making API call to:', url);
+                console.log(`Making API call to: ${url}`);
                 const response = await fetch(url);
                 const data = await response.json();
-                console.log('API response:', data);
+                console.log(`API response for "${text}":`, data);
 
                 if (data.responseStatus === 200 && data.responseData) {
-                    const translatedBatch = data.responseData.translatedText.split(delimiter);
-                    console.log('Translated batch:', translatedBatch);
+                    const translatedText = data.responseData.translatedText;
                     // Update cache
-                    uncachedTexts.forEach((text, i) => {
-                        const cacheKey = `${text}_${targetLangCode}`;
-                        translationCache[cacheKey] = translatedBatch[i];
-                    });
+                    translationCache[cacheKey] = translatedText;
                     localStorage.setItem('translationCache', JSON.stringify(translationCache));
-
-                    // Map translated texts back to their original indices
-                    let translatedIndex = 0;
-                    return cachedResults.map(result => {
-                        if (result.translatedText) {
-                            return result.translatedText;
-                        }
-                        return translatedBatch[translatedIndex++];
-                    });
+                    console.log(`Translated "${text}" to "${translatedText}"`);
+                    return translatedText;
                 }
                 throw new Error('Translation failed');
             } catch (error) {
-                console.error('Translation error:', error);
-                // Fallback to original texts if translation fails
-                return texts;
+                console.error(`Translation error for "${text}": ${error}`);
+                return text; // Fallback to original text
+            }
+        }
+
+        // Lock-like mechanism using a queue to ensure sequential translation
+        class TranslationQueue {
+            constructor() {
+                this.queue = [];
+                this.isProcessing = false;
+            }
+
+            // Add a translation task to the queue
+            async enqueue(task) {
+                this.queue.push(task);
+                if (!this.isProcessing) {
+                    await this.processQueue();
+                }
+            }
+
+            // Process the queue sequentially
+            async processQueue() {
+                this.isProcessing = true;
+                while (this.queue.length > 0) {
+                    const task = this.queue.shift();
+                    await task();
+                }
+                this.isProcessing = false;
             }
         }
 
@@ -383,15 +410,6 @@
                 return;
             }
 
-            // Get all elements with data-translate attribute
-            const elements = document.querySelectorAll('[data-translate]');
-            console.log('Elements to translate:', elements.length);
-            
-            // Collect translations in memory
-            const translationResults = [];
-            const dynamicTexts = [];
-            const dynamicIndices = [];
-
             // Store Jinja-resolved values for placeholders
             const placeholders = {
                 skill_name: '{{ skill_name | safe }}',
@@ -415,17 +433,12 @@
                 console.log(`Resolved placeholder ${key}: "${placeholders[key]}"`);
             }
 
-            for (let i = 0; i < elements.length; i++) {
-                const element = elements[i];
+            // Step 1: Translate static UI elements
+            const staticElements = document.querySelectorAll('[data-translate]:not([data-translate="question"]):not([data-translate^="option"]):not([data-translate="correct-answer"]):not([data-translate="explanation"])');
+            for (let element of staticElements) {
                 const key = element.getAttribute('data-translate');
-                let originalText = element.textContent; // Use textContent to avoid HTML issues
-                console.log(`Processing element with key "${key}": "${originalText}"`);
-
-                // Handle static UI elements with uiTranslations
-                if (uiTranslations[targetLang] && uiTranslations[targetLang][key] && 
-                    !['question', 'option1', 'option2', 'option3', 'option4', 'correct-answer', 'explanation'].includes(key)) {
+                if (uiTranslations[targetLang] && uiTranslations[targetLang][key]) {
                     let translatedText = uiTranslations[targetLang][key];
-                    // Replace placeholders for static UI elements only
                     if (key === 'title' || key === 'header') {
                         translatedText = translatedText.replace('{{ skill_name }}', placeholders.skill_name);
                     } else if (key === 'question-counter') {
@@ -437,46 +450,62 @@
                     } else if (key === 'correct-answer-label') {
                         // No placeholder replacement needed for label
                     }
-                    translationResults[i] = { element, translatedText };
+                    element.textContent = translatedText;
                     console.log(`Applied static translation for "${key}": "${translatedText}"`);
-                    continue;
-                }
-
-                // Add quiz content and other dynamic texts for API translation
-                if (originalText) {
-                    dynamicTexts.push(originalText);
-                    dynamicIndices.push(i);
-                    translationResults[i] = { element };
-                    console.log(`Added "${originalText}" for dynamic translation`);
                 }
             }
 
-            // Perform dynamic translations in a single batched request
-            if (dynamicTexts.length > 0) {
-                try {
-                    const translatedTexts = await translateText(dynamicTexts, targetLangCode);
-                    // Map dynamic translations back to their indices
-                    dynamicIndices.forEach((index, i) => {
-                        translationResults[index].translatedText = translatedTexts[i];
-                        console.log(`Dynamic translation for "${dynamicTexts[i]}": "${translatedTexts[i]}"`);
+            // Step 2: Translate dynamic quiz content using a queue to ensure order
+            const translationQueue = new TranslationQueue();
+
+            // Core quiz elements (always present)
+            const coreKeys = ['question', 'option1', 'option2', 'option3', 'option4'];
+            for (let key of coreKeys) {
+                const element = document.querySelector(`[data-translate="${key}"]`);
+                if (element) {
+                    const originalText = element.textContent;
+                    await translationQueue.enqueue(async () => {
+                        const translatedText = await translateText(originalText, targetLangCode);
+                        element.textContent = translatedText;
+                        console.log(`Applied translation for "${key}": "${translatedText}"`);
                     });
-                } catch (error) {
-                    console.error('Error during batched translations:', error);
-                    // Fallback to original texts if translation fails
-                    dynamicIndices.forEach((index, i) => {
-                        translationResults[index].translatedText = dynamicTexts[i];
-                    });
+                } else {
+                    console.error(`Element with data-translate="${key}" not found!`);
                 }
             }
 
-            // Apply all translations at once
-            translationResults.forEach(result => {
-                if (result && result.translatedText) {
-                    // Use textContent to preserve DOM structure, especially for <span> inside <label>
-                    result.element.textContent = result.translatedText;
-                    console.log(`Applied translation to element: "${result.translatedText}"`);
+            // Feedback elements (only present if answered)
+            const feedbackKeys = ['correct-answer', 'explanation'];
+            for (let key of feedbackKeys) {
+                const element = document.querySelector(`[data-translate="${key}"]`);
+                if (element) {
+                    const originalText = element.textContent;
+                    await translationQueue.enqueue(async () => {
+                        const translatedText = await translateText(originalText, targetLangCode);
+                        element.textContent = translatedText;
+                        console.log(`Applied translation for "${key}": "${translatedText}"`);
+                    });
+                } else {
+                    console.log(`Element with data-translate="${key}" not found (expected if not answered).`);
                 }
-            });
+            }
+
+            // Validate option order
+            const optionElements = {
+                'option1': document.querySelector('[data-translate="option1"]'),
+                'option2': document.querySelector('[data-translate="option2"]'),
+                'option3': document.querySelector('[data-translate="option3"]'),
+                'option4': document.querySelector('[data-translate="option4"]')
+            };
+            console.log('Validating options after translation:');
+            for (let key in optionElements) {
+                const element = optionElements[key];
+                if (element) {
+                    console.log(`${key}: "${element.textContent}"`);
+                } else {
+                    console.error(`${key} element not found!`);
+                }
+            }
 
             // Calculate elapsed time and enforce minimum delay
             const elapsedTime = Date.now() - startTime;
