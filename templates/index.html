@@ -4,7 +4,6 @@
 
 {% block content %}
 
-
 <style>
     body {
         background-color: #f8f9fa;
@@ -110,6 +109,27 @@
         color: #666;
         line-height: 1.6;
         margin-bottom: 1.5rem;
+    }
+
+    /* Video Container Styling */
+    .video-container {
+        position: relative;
+        width: 100%;
+        padding-bottom: 56.25%; /* 16:9 Aspect Ratio (9/16 = 0.5625) */
+        margin-bottom: 1.5rem;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .video-container video {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border: none;
+        border-radius: 12px;
     }
 
     .gov-initiatives .initiative-logos {
@@ -295,6 +315,11 @@
             font-size: 0.95rem;
         }
 
+        .video-container {
+            padding-bottom: 56.25%; /* Maintain 16:9 aspect ratio */
+            margin-bottom: 1rem;
+        }
+
         .gov-initiatives .initiative-logos {
             gap: 1.5rem;
         }
@@ -380,6 +405,11 @@
 
         .gov-initiatives p {
             font-size: clamp(0.9rem, 2.5vw, 0.95rem);
+        }
+
+        .video-container {
+            padding-bottom: 56.25%; /* Maintain 16:9 aspect ratio */
+            margin-bottom: 1rem;
         }
 
         .gov-initiatives .initiative-logos {
@@ -485,6 +515,11 @@
             font-size: clamp(0.85rem, 2.2vw, 0.9rem);
         }
 
+        .video-container {
+            padding-bottom: 56.25%; /* Maintain 16:9 aspect ratio */
+            margin-bottom: 0.8rem;
+        }
+
         .gov-initiatives .initiative-logos {
             gap: 0.8rem;
         }
@@ -563,12 +598,19 @@
         {% endfor %}
     </div>
 
-    <!-- New Government Initiatives Section -->
+    <!-- Government Initiatives Section with Video -->
     <section class="gov-initiatives">
         <h2>Empowering Rural India</h2>
         <p>
             The Government of India is committed to uplifting rural communities through skill development and income generation programs. Initiatives like <strong>Skill India</strong> and <strong>Pradhan Mantri Kaushal Vikas Yojana (PMKVY)</strong> provide training in various trades, enabling farmers, housewives, and village youth to earn sustainable livelihoods. Increasing income through skill development not only improves quality of life but also contributes to the nation's economic growth. Join us to build a stronger, self-reliant India!
         </p>
+        <!-- Video Embedded Here -->
+        <div class="video-container">
+            <video controls>
+                <source src="{{ url_for('static', filename='videos/introduction.mp4') }}" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
         <div class="initiative-logos">
             <img src="https://upload.wikimedia.org/wikipedia/commons/1/17/Ashoka_Chakra.svg" alt="Ashoka Chakra">
             <img src="https://skillindiamission.in/frontend/images/logos.png" alt="Skill India Logo">
