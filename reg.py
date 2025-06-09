@@ -37,14 +37,17 @@ def reg():
         try:
             response = requests.post(GOOGLE_FORM_URL, data=form_data)
             if response.status_code != 200:
+                session.clear()
                 print(f"Failed to submit to Google Form: {response.status_code}")
+            else:
+                session.clear()
         except requests.RequestException as e:
-            # print(f"Error submitting to Google Form: {e}")
+            print(f"Error submitting to Google Form: {e}")
             session.clear()
         return redirect(url_for('index'))
     
     # Handle GET request (render registration.html)
-    return render_template('Registration.html')
+    return render_template('registration.html')
 # https://docs.google.com/forms/d/e/1FAIpQLSde_y_aJGR5bWkyC83iaPvxXU3Ias3PxIwetlVq-YGrToRqSw/viewform?usp=pp_url
 # &entry.2072056986=s&entry.291075541=a&entry.1845336953=s&
 # entry.1489590549=i&
