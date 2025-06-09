@@ -78,7 +78,6 @@ def translator(questions):
                     logger.debug(f"Translated {field}: {translated_text}")
                 except Exception as e:
                     logger.error(f"Failed to retrieve translation for {field}: {e}")
-                    # Continue even if translation fails for a field
                     continue
         translated_questions.append(translated_data)
     return translated_questions
@@ -168,7 +167,7 @@ def quiz():
         logger.info(f"Initialized session for quiz: {session}")
 
     current_question_index = session['current_question']
-    logger.debug(f"Current session state: {session}")
+    logger.debug(f"Current session state before rendering: {session}")
 
     if request.method == 'POST':
         logger.info(f"Received POST request: {request.form}")
@@ -176,17 +175,18 @@ def quiz():
             user_answer = request.form.get('answer', '').strip()
             if not user_answer:
                 logger.warning("No answer provided in form submission")
-            correct_answer = questions[current_question_index]['correct_answer']
-            session['answered'] = True
-            if user_answer == correct_answer:
-                session['score'] = session.get('score', 0) + 1
-                session['feedback'] = 'Correct!'
-                logger.info(f"Correct answer for question {current_question_index + 1} in {skill}")
             else:
-                session['feedback'] = 'Incorrect!'
-                logger.info(f"Incorrect answer for question {current_question_index + 1} in {skill}")
-            session['correct_answer'] = correct_answer
-            session['explanation'] = questions[current_question_index]['explanation']
+                correct_answer = questions[current_question_index]['correct_answer']
+                session['answered'] = True
+                if user_answer == correct_answer:
+                    session['score'] = session.get('score', 0) + 1
+                    session['feedback'] = 'Correct!'
+                    logger.info(f"Correct answer for question {current_question_index + 1} in {skill}")
+                else:
+                    session['feedback'] = 'Incorrect!'
+                    logger.info(f"Incorrect answer for question {current_question_index + 1} in {skill}")
+                session['correct_answer'] = correct_answer
+                session['explanation'] = questions[current_question_index]['explanation']
         elif 'next' in request.form:
             session['current_question'] += 1
             session['answered'] = False
@@ -194,6 +194,7 @@ def quiz():
             session['correct_answer'] = ''
             session['explanation'] = ''
             logger.info(f"Moving to question {session['current_question'] + 1}")
+            logger.debug(f"Session state after moving to next question: {session}")
             if session['current_question'] >= session['total_questions']:
                 logger.info(f"Quiz completed for {skill}, score: {session['score']}")
                 return redirect(url_for('forms.reg'))
