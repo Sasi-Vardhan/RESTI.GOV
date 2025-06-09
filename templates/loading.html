@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loading - Government of India</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,400;0,700;1,400;1,700&family=Noto+Sans+Devanagari:wght@400;700&family=Noto+Sans+Tamil:wght@400;700&family=Noto+Sans+Telugu:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans', 'Noto Sans Devanagari', 'Noto Sans Tamil', 'Noto Sans Telugu', 'Arial', sans-serif;
+            background-color: #f7fafc;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .tricolor-stripe {
+            height: 4px;
+            background: linear-gradient(to right, #FF9933 33.33%, #FFFFFF 33.33%, #FFFFFF 66.66%, #138808 66.66%);
+        }
+
+        main {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loading-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .spinner {
+            border: 6px solid rgba(0, 123, 255, 0.1);
+            border-left: 6px solid #007bff;
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            margin-top: 1rem;
+            font-size: 1rem;
+            color: #666;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 640px) {
+            .spinner {
+                width: 36px;
+                height: 36px;
+                border-width: 4px;
+            }
+
+            .loading-text {
+                font-size: 0.875rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Tricolor Stripe -->
+    <div class="tricolor-stripe"></div>
+    
+    <!-- Main Content -->
+    <main>
+        <div class="loading-container">
+            <div class="spinner"></div>
+            <p class="loading-text">Translating Quiz Content...</p>
+        </div>
+    </main>
+
+    <!-- JavaScript to Redirect -->
+    <script>
+        setTimeout(() => {
+            window.location.href = "{{ url_for('quiz.quiz') }}";
+        }, 2000);
+    </script>
+</body>
+</html>
