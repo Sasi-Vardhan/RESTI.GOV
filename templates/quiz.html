@@ -342,7 +342,7 @@
             <p class="question-text">{{ question.question }}</p>
             
             <!-- Form for Submitting Answer -->
-            <form method="POST" action="{{ url_for('quiz.quiz') }}" id="quiz-form" autocomplete="off">
+            <form method="POST" action="{{ url_for('quiz.quiz') }}" id="quiz-form-{{ question_number }}" autocomplete="off">
                 <div class="options-container">
                     <label class="option-label">
                         <input type="radio" name="answer" value="{{ question.option1 }}" {% if answered %}disabled{% endif %} required> 
@@ -381,7 +381,7 @@
                     </p>
                     <p class="explanation">{{ explanation }}</p>
                 </div>
-                <form method="POST" action="{{ url_for('quiz.quiz') }}" id="next-form" autocomplete="off">
+                <form method="POST" action="{{ url_for('quiz.quiz') }}" id="next-form-{{ question_number }}" autocomplete="off">
                     <input type="hidden" name="next" value="true">
                     <button type="submit" class="next-button">Next Question</button>
                 </form>
@@ -429,5 +429,20 @@
             </div>
         </div>
     </footer>
+
+    <!-- Debug Script -->
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const form = document.querySelector('form[id^="quiz-form-"]');
+        if (form) {
+            {% if answered is defined and question_number is defined %}
+            const isAnswered = {{ answered | tojson }};
+            const questionNumber = {{ question_number | tojson }};
+            const inputs = form.querySelectorAll('input[type="radio"]');
+            console.log("Question " + questionNumber + ": Answered = " + isAnswered + ", Inputs disabled = " + inputs[0]?.disabled);
+            {% endif %}
+        }
+    });
+</script>
 </body>
 </html>
