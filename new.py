@@ -90,7 +90,9 @@ def set_language(language):
         # print(language)
     return redirect(url_for('index'))
 
-
+@app.route('/favicon.png')
+def favicon():
+    return url_for('static', filename='images/favicon.png')
 
 
 
