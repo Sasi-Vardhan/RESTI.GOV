@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, session, redirect, url_for
+from flask import Flask, render_template, request, session, redirect, url_for,send_from_directory
 from deep_translator import GoogleTranslator
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from flask import Blueprint
@@ -92,8 +92,7 @@ def set_language(language):
 
 @app.route('/favicon.png')
 def favicon():
-    return url_for('static', filename='images/favicon.png')
-
+    return send_from_directory('static/images', 'favicon.png')
 
 
 if __name__ == '__main__':
