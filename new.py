@@ -12,9 +12,9 @@ app.register_blueprint(select_skills_bp, url_prefix='/skills')
 app.register_blueprint(quiz_bp)
 app.register_blueprint(forms)
 
-app.mount("/static", StaticFiles(directory="static"), name="static")
+# app.mount("/static", StaticFiles(directory="static"), name="static")
 
-templates = Jinja2Templates(directory="templates")
+# templates = Jinja2Templates(directory="templates")
 
 # Language mapping
 LANGUAGES = {
