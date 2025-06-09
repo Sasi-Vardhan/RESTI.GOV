@@ -1,13 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ language }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title data-translate="title">{{ skill_name }} Quiz - Government of India</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,400;0,700;1,400;1,700&family=Noto+Sans+Devanagari:wght@400;700&family=Noto+Sans+Tamil:wght@400;700&family=Noto+Sans+Telugu:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: 'Noto Sans', 'Noto Sans Devanagari', 'Noto Sans Tamil', 'Noto Sans Telugu', 'Arial', sans-serif;
         }
         
         .tricolor-stripe {
@@ -15,38 +16,88 @@
             background: linear-gradient(to right, #FF9933 33.33%, #FFFFFF 33.33%, #FFFFFF 66.66%, #138808 66.66%);
         }
         
+        .option-label {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            margin-bottom: 1rem; /* Ensure spacing between options */
+            transition: all 0.2s ease;
+        }
+        
         .option-label:hover {
             background-color: #f1f5f9;
             transform: translateX(5px);
-            transition: all 0.2s ease;
+        }
+        
+        .option-prefix {
+            margin-right: 0.5rem;
+            font-weight: 600;
+        }
+        
+        .option-text {
+            flex: 1;
+            line-height: 1.5;
         }
         
         @media (max-width: 640px) {
             .mobile-text-sm {
                 font-size: 0.875rem;
             }
+            .option-label {
+                padding: 0.75rem;
+                margin-bottom: 0.75rem;
+            }
         }
 
         /* Loading spinner styles */
         .loading-container {
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             min-height: 50vh;
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+
+        .loading-container.hidden {
+            opacity: 0;
+            pointer-events: none;
         }
 
         .spinner {
-            border: 4px solid rgba(0, 0, 0, 0.1);
-            border-left: 4px solid #007bff;
+            border: 6px solid rgba(0, 123, 255, 0.1);
+            border-left: 6px solid #007bff;
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
+            width: 48px;
+            height: 48px;
             animation: spin 1s linear infinite;
         }
 
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
+        }
+
+        /* Loading text */
+        .loading-text {
+            margin-top: 1rem;
+            font-size: 1rem;
+            color: #666;
+            font-weight: 500;
+        }
+
+        /* Quiz content transition */
+        #quiz-content {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        #quiz-content.visible {
+            opacity: 1;
         }
     </style>
 </head>
@@ -67,31 +118,37 @@
         <!-- Loading Spinner -->
         <div id="loading" class="loading-container">
             <div class="spinner"></div>
+            <p class="loading-text" data-translate="loading-text">Loading Quiz...</p>
         </div>
 
         <!-- Quiz Content (Initially Hidden) -->
         <div id="quiz-content" class="bg-white p-6 sm:p-8 rounded-lg shadow-lg w-full max-w-4xl hidden">
             <h3 class="text-xl text-gray-600 mb-6" data-translate="question-counter">Question {{ question_number }} of {{ total_questions }}</h3>
             
+            <!-- Question (to be translated dynamically) -->
             <p class="text-lg sm:text-xl mb-8 text-gray-800 font-medium leading-relaxed" data-translate="question">{{ question.question }}</p>
             
             <form id="quiz-form" method="POST" action="{{ url_for('quiz.quiz') }}" class="space-y-4">
-                <div class="space-y-3">
-                    <label class="option-label flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer">
+                <div class="space-y-4">
+                    <label class="option-label">
                         <input type="radio" name="answer" value="{{ question.option1 }}" {% if answered %}disabled{% endif %} class="mr-4 h-5 w-5 text-blue-600" required> 
-                        <span class="text-lg text-gray-700" data-translate="option1">A) {{ question.option1 }}</span>
+                        <span class="option-prefix">A)</span>
+                        <span class="option-text" data-translate="option1">{{ question.option1 }}</span>
                     </label>
-                    <label class="option-label flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer">
+                    <label class="option-label">
                         <input type="radio" name="answer" value="{{ question.option2 }}" {% if answered %}disabled{% endif %} class="mr-4 h-5 w-5 text-blue-600"> 
-                        <span class="text-lg text-gray-700" data-translate="option2">B) {{ question.option2 }}</span>
+                        <span class="option-prefix">B)</span>
+                        <span class="option-text" data-translate="option2">{{ question.option2 }}</span>
                     </label>
-                    <label class="option-label flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer">
+                    <label class="option-label">
                         <input type="radio" name="answer" value="{{ question.option3 }}" {% if answered %}disabled{% endif %} class="mr-4 h-5 w-5 text-blue-600"> 
-                        <span class="text-lg text-gray-700" data-translate="option3">C) {{ question.option3 }}</span>
+                        <span class="option-prefix">C)</span>
+                        <span class="option-text" data-translate="option3">{{ question.option3 }}</span>
                     </label>
-                    <label class="option-label flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer">
+                    <label class="option-label">
                         <input type="radio" name="answer" value="{{ question.option4 }}" {% if answered %}disabled{% endif %} class="mr-4 h-5 w-5 text-blue-600"> 
-                        <span class="text-lg text-gray-700" data-translate="option4">D) {{ question.option4 }}</span>
+                        <span class="option-prefix">D)</span>
+                        <span class="option-text" data-translate="option4">{{ question.option4 }}</span>
                     </label>
                 </div>
                 
@@ -105,7 +162,10 @@
             {% if answered %}
                 <div class="mt-6 p-6 {% if feedback == 'Correct!' %}bg-green-50 border-green-500{% else %}bg-red-50 border-red-500{% endif %} border-l-4 rounded-r-lg">
                     <p class="text-xl font-semibold {% if feedback == 'Correct!' %}text-green-700{% else %}text-red-700{% endif %} mb-3" data-translate="feedback">{{ feedback }}</p>
-                    <p class="text-lg text-gray-700 mb-2" data-translate="correct-answer">Correct Answer: {{ correct_answer }}</p>
+                    <p class="text-lg text-gray-700 mb-2">
+                        <span data-translate="correct-answer-label">Correct Answer:</span>
+                        <span data-translate="correct-answer">{{ correct_answer }}</span>
+                    </p>
                     <p class="text-gray-700" data-translate="explanation">{{ explanation }}</p>
                 </div>
                 <form method="POST" action="{{ url_for('quiz.quiz') }}" class="mt-6 text-center">
@@ -124,9 +184,7 @@
     <footer class="bg-slate-700 text-white py-10">
         <div class="tricolor-stripe mb-8"></div>
         <div class="container mx-auto px-6">
-            <!-- Main Footer Content -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
-                <!-- Government Logo Section -->
                 <div class="flex flex-col items-center text-center">
                     <div class="bg-white p-3 rounded-full mb-4 shadow-lg">
                         <img src="static/images/govt-logo.png" alt="Government of India" class="w-12 h-12">
@@ -134,8 +192,6 @@
                     <h3 class="text-xl font-bold text-white mb-2" data-translate="footer-govt">Government of India</h3>
                     <p class="text-blue-200 text-sm font-medium" data-translate="footer-govt-subtitle">Skill Initiative Program</p>
                 </div>
-                
-                <!-- Ashoka Lion Capital Section -->
                 <div class="flex flex-col items-center text-center">
                     <div class="bg-white p-3 rounded-full mb-4 shadow-lg">
                         <img src="static/images/ashoka-emblem.jpg" alt="Ashoka Lion Capital" class="w-16 h-16">
@@ -143,8 +199,6 @@
                     <p class="text-amber-300 text-lg font-semibold tracking-wide" data-translate="footer-motto">सत्यमेव जयते</p>
                     <p class="text-blue-200 text-sm mt-1" data-translate="footer-motto-subtitle">Truth Alone Triumphs</p>
                 </div>
-                
-                <!-- Ministry Section -->
                 <div class="flex flex-col items-center text-center">
                     <div class="bg-white p-2 rounded mb-4 shadow-lg">
                         <img src="static/images/indian-flag.webp" alt="Indian Flag" class="w-16 h-10">
@@ -153,11 +207,7 @@
                     <p class="text-blue-200 text-sm" data-translate="footer-ministry-subtitle">& Entrepreneurship</p>
                 </div>
             </div>
-            
-            <!-- Divider -->
             <div class="border-t border-slate-500 my-8"></div>
-            
-            <!-- Bottom Section -->
             <div class="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
                 <div class="text-center md:text-left">
                     <p class="text-blue-100 text-sm" data-translate="footer-empower">Empowering India through Digital Skill Development</p>
@@ -169,7 +219,7 @@
         </div>
     </footer>
 
-    <!-- JavaScript for Client-Side Translation -->
+    <!-- JavaScript for Client-Side Translation and Delayed Loading -->
     <script>
         // Language passed from the backend
         const targetLang = '{{ language }}';
@@ -182,22 +232,17 @@
             'telugu': 'te'
         };
 
-        // Static UI translations (fallback if API fails)
+        // Static UI translations (fallback if API fails, only for UI elements)
         const uiTranslations = {
             'english': {
                 'title': '{{ skill_name }} Quiz - Government of India',
                 'header': '{{ skill_name }} Quiz',
                 'header-subtitle': 'Government of India - Skill Development Program',
+                'loading-text': 'Loading Quiz...',
                 'question-counter': 'Question {{ question_number }} of {{ total_questions }}',
-                'question': '{{ question.question }}',
-                'option1': 'A) {{ question.option1 }}',
-                'option2': 'B) {{ question.option2 }}',
-                'option3': 'C) {{ question.option3 }}',
-                'option4': 'D) {{ question.option4 }}',
                 'submit-button': 'Submit Answer',
                 'feedback': '{{ feedback }}',
-                'correct-answer': 'Correct Answer: {{ correct_answer }}',
-                'explanation': '{{ explanation }}',
+                'correct-answer-label': 'Correct Answer: ',
                 'next-button': 'Next Question',
                 'change-skill': 'Change Skill',
                 'footer-govt': 'Government of India',
@@ -213,8 +258,11 @@
                 'title': '{{ skill_name }} प्रश्नोत्तरी - भारत सरकार',
                 'header': '{{ skill_name }} प्रश्नोत्तरी',
                 'header-subtitle': 'भारत सरकार - कौशल विकास कार्यक्रम',
+                'loading-text': 'प्रश्नोत्तरी लोड हो रही है...',
                 'question-counter': 'प्रश्न {{ question_number }} का {{ total_questions }}',
                 'submit-button': 'उत्तर जमा करें',
+                'feedback': '{{ feedback }}',
+                'correct-answer-label': 'सही उत्तर: ',
                 'next-button': 'अगला प्रश्न',
                 'change-skill': 'कौशल बदलें',
                 'footer-govt': 'भारत सरकार',
@@ -230,8 +278,11 @@
                 'title': '{{ skill_name }} வினாடி வினா - இந்திய அரசு',
                 'header': '{{ skill_name }} வினாடி வினா',
                 'header-subtitle': 'இந்திய அரசு - திறன் மேம்பாட்டு திட்டம்',
+                'loading-text': 'வினாடி வினா ஏற்றப்படுகிறது...',
                 'question-counter': 'கேள்வி {{ question_number }} இல் {{ total_questions }}',
                 'submit-button': 'பதிலை சமர்ப்பிக்கவும்',
+                'feedback': '{{ feedback }}',
+                'correct-answer-label': 'சரியான பதில்: ',
                 'next-button': 'அடுத்த கேள்வி',
                 'change-skill': 'திறனை மாற்றவும்',
                 'footer-govt': 'இந்திய அரசு',
@@ -247,8 +298,11 @@
                 'title': '{{ skill_name }} క్విజ్ - భారత ప్రభుత్వం',
                 'header': '{{ skill_name }} క్విజ్',
                 'header-subtitle': 'భారత ప్రభుత్వం - నైపుణ్య అభివృద్ధి కార్యక్రమం',
+                'loading-text': 'క్విజ్ లోడ్ అవుతోంది...',
                 'question-counter': 'ప్రశ్న {{ question_number }} ఆఫ్ {{ total_questions }}',
                 'submit-button': 'సమాధానం సమర్పించండి',
+                'feedback': '{{ feedback }}',
+                'correct-answer-label': 'సరైన సమాధానం: ',
                 'next-button': 'తదుపరి ప్రశ్న',
                 'change-skill': 'నైపుణ్యాన్ని మార్చండి',
                 'footer-govt': 'భారత ప్రభుత్వం',
@@ -263,154 +317,210 @@
         };
 
         // Initialize translation cache from localStorage
-        const translationCache = JSON.parse(localStorage.getItem('translationCache') || '{}');
+        let translationCache = JSON.parse(localStorage.getItem('translationCache') || '{}');
 
-        // Function to translate text using MyMemory API
-        async function translateText(texts, targetLangCode) {
+        // Function to translate a single text using MyMemory API
+        async function translateText(text, targetLangCode) {
+            console.log(`Translating text: "${text}" to language: ${targetLangCode}`);
+
             // Check cache first
-            const uncachedTexts = [];
-            const cachedResults = texts.map((text, index) => {
-                const cacheKey = `${text}_${targetLangCode}`;
-                if (translationCache[cacheKey]) {
-                    return { index, translatedText: translationCache[cacheKey] };
-                }
-                uncachedTexts.push(text);
-                return { index, text };
-            });
-
-            // If all texts are cached, return immediately
-            if (uncachedTexts.length === 0) {
-                return cachedResults.map(result => result.translatedText);
+            const cacheKey = `${text}_${targetLangCode}`;
+            if (translationCache[cacheKey]) {
+                console.log(`Cache hit for "${text}": ${translationCache[cacheKey]}`);
+                return translationCache[cacheKey];
             }
 
-            // Batch uncached texts into a single request by joining with a delimiter
-            const delimiter = '|||';
-            const batchedText = uncachedTexts.join(delimiter);
-            const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(batchedText)}&langpair=en|${targetLangCode}`;
-            
+            // If not in cache, make API call
+            const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|${targetLangCode}`;
             try {
+                console.log(`Making API call to: ${url}`);
                 const response = await fetch(url);
                 const data = await response.json();
-                if (data.responseStatus === 200 && data.responseData) {
-                    const translatedBatch = data.responseData.translatedText.split(delimiter);
-                    // Update cache
-                    uncachedTexts.forEach((text, i) => {
-                        const cacheKey = `${text}_${targetLangCode}`;
-                        translationCache[cacheKey] = translatedBatch[i];
-                    });
-                    localStorage.setItem('translationCache', JSON.stringify(translationCache));
+                console.log(`API response for "${text}":`, data);
 
-                    // Map translated texts back to their original indices
-                    let translatedIndex = 0;
-                    return cachedResults.map(result => {
-                        if (result.translatedText) {
-                            return result.translatedText;
-                        }
-                        return translatedBatch[translatedIndex++];
-                    });
+                if (data.responseStatus === 200 && data.responseData) {
+                    const translatedText = data.responseData.translatedText;
+                    // Update cache
+                    translationCache[cacheKey] = translatedText;
+                    localStorage.setItem('translationCache', JSON.stringify(translationCache));
+                    console.log(`Translated "${text}" to "${translatedText}"`);
+                    return translatedText;
                 }
                 throw new Error('Translation failed');
             } catch (error) {
-                console.error('Translation error:', error);
-                // Fallback to original texts if translation fails
-                return texts;
+                console.error(`Translation error for "${text}": ${error}`);
+                return text; // Fallback to original text
             }
         }
 
-        // Function to apply translations
+        // Lock-like mechanism using a queue to ensure sequential translation
+        class TranslationQueue {
+            constructor() {
+                this.queue = [];
+                this.isProcessing = false;
+            }
+
+            // Add a translation task to the queue
+            async enqueue(task) {
+                this.queue.push(task);
+                if (!this.isProcessing) {
+                    await this.processQueue();
+                }
+            }
+
+            // Process the queue sequentially
+            async processQueue() {
+                this.isProcessing = true;
+                while (this.queue.length > 0) {
+                    const task = this.queue.shift();
+                    await task();
+                }
+                this.isProcessing = false;
+            }
+        }
+
+        // Function to enforce a minimum delay
+        function delay(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        // Function to apply translations with delayed loading
         async function applyTranslations() {
             const targetLangCode = languageCodes[targetLang] || 'en';
-            
+            console.log('Target language code:', targetLangCode);
+
+            const MINIMUM_DELAY_MS = 1000; // 1 second minimum delay for loading spinner
+
+            // Start timing the translation process
+            const startTime = Date.now();
+
             // Skip translation if the language is English
             if (targetLangCode === 'en') {
-                // Show content immediately if no translation is needed
+                console.log('Language is English, skipping translation');
+                const elapsedTime = Date.now() - startTime;
+                const remainingDelay = MINIMUM_DELAY_MS - elapsedTime;
+                if (remainingDelay > 0) {
+                    await delay(remainingDelay);
+                }
+                // Hide loading spinner and show quiz content with transition
                 document.getElementById('loading').classList.add('hidden');
-                document.getElementById('quiz-content').classList.remove('hidden');
+                const quizContent = document.getElementById('quiz-content');
+                quizContent.classList.remove('hidden');
+                quizContent.classList.add('visible');
                 return;
             }
 
-            // Get all elements with data-translate attribute
-            const elements = document.querySelectorAll('[data-translate]');
-            
-            // Collect translations in memory
-            const translationResults = [];
-            const dynamicTexts = [];
-            const dynamicIndices = [];
+            // Store Jinja-resolved values for placeholders
+            const placeholders = {
+                skill_name: '{{ skill_name | safe }}',
+                question_number: '{{ question_number | safe }}',
+                total_questions: '{{ total_questions | safe }}',
+                feedback: '{{ feedback | safe }}',
+                correct_answer: '{{ correct_answer | safe }}',
+                question: '{{ question.question | safe }}',
+                option1: '{{ question.option1 | safe }}',
+                option2: '{{ question.option2 | safe }}',
+                option3: '{{ question.option3 | safe }}',
+                option4: '{{ question.option4 | safe }}',
+                explanation: '{{ explanation | safe }}'
+            };
 
-            for (let i = 0; i < elements.length; i++) {
-                const element = elements[i];
+            // Resolve placeholders by extracting them from the DOM
+            for (let key in placeholders) {
+                const tempElement = document.createElement('div');
+                tempElement.innerHTML = placeholders[key];
+                placeholders[key] = tempElement.textContent || placeholders[key];
+                console.log(`Resolved placeholder ${key}: "${placeholders[key]}"`);
+            }
+
+            // Step 1: Translate static UI elements
+            const staticElements = document.querySelectorAll('[data-translate]:not([data-translate="question"]):not([data-translate^="option"]):not([data-translate="correct-answer"]):not([data-translate="explanation"])');
+            for (let element of staticElements) {
                 const key = element.getAttribute('data-translate');
-                let originalText = element.innerText;
-                
-                // Check if there's a static UI translation
                 if (uiTranslations[targetLang] && uiTranslations[targetLang][key]) {
-                    // Replace placeholders (e.g., {{ skill_name }})
-                    let translatedText = uiTranslations[targetLang][key]
-                        .replace('{{ skill_name }}', '{{ skill_name }}')
-                        .replace('{{ question_number }}', '{{ question_number }}')
-                        .replace('{{ total_questions }}', '{{ total_questions }}')
-                        .replace('{{ question.question }}', '{{ question.question }}')
-                        .replace('{{ question.option1 }}', '{{ question.option1 }}')
-                        .replace('{{ question.option2 }}', '{{ question.option2 }}')
-                        .replace('{{ question.option3 }}', '{{ question.option3 }}')
-                        .replace('{{ question.option4 }}', '{{ question.option4 }}')
-                        .replace('{{ feedback }}', '{{ feedback }}')
-                        .replace('{{ correct_answer }}', '{{ correct_answer }}')
-                        .replace('{{ explanation }}', '{{ explanation }}');
-                    
-                    // Replace placeholders with actual values
-                    translatedText = translatedText
-                        .replace('{{ skill_name }}', '{{ skill_name | safe }}')
-                        .replace('{{ question_number }}', '{{ question_number | safe }}')
-                        .replace('{{ total_questions }}', '{{ total_questions | safe }}')
-                        .replace('{{ question.question }}', '{{ question.question | safe }}')
-                        .replace('{{ question.option1 }}', '{{ question.option1 | safe }}')
-                        .replace('{{ question.option2 }}', '{{ question.option2 | safe }}')
-                        .replace('{{ question.option3 }}', '{{ question.option3 | safe }}')
-                        .replace('{{ question.option4 }}', '{{ question.option4 | safe }}')
-                        .replace('{{ feedback }}', '{{ feedback | safe }}')
-                        .replace('{{ correct_answer }}', '{{ correct_answer | safe }}')
-                        .replace('{{ explanation }}', '{{ explanation | safe }}');
-                    
-                    translationResults[i] = { element, translatedText };
-                    continue;
-                }
-
-                // Add to dynamic translations if there's text to translate
-                if (originalText) {
-                    dynamicTexts.push(originalText);
-                    dynamicIndices.push(i);
-                    translationResults[i] = { element };
+                    let translatedText = uiTranslations[targetLang][key];
+                    if (key === 'title' || key === 'header') {
+                        translatedText = translatedText.replace('{{ skill_name }}', placeholders.skill_name);
+                    } else if (key === 'question-counter') {
+                        translatedText = translatedText
+                            .replace('{{ question_number }}', placeholders.question_number)
+                            .replace('{{ total_questions }}', placeholders.total_questions);
+                    } else if (key === 'feedback') {
+                        translatedText = translatedText.replace('{{ feedback }}', placeholders.feedback);
+                    } else if (key === 'correct-answer-label') {
+                        // No placeholder replacement needed for label
+                    }
+                    element.textContent = translatedText;
+                    console.log(`Applied static translation for "${key}": "${translatedText}"`);
                 }
             }
 
-            // Perform dynamic translations in a single batched request
-            if (dynamicTexts.length > 0) {
-                try {
-                    const translatedTexts = await translateText(dynamicTexts, targetLangCode);
-                    // Map dynamic translations back to their indices
-                    dynamicIndices.forEach((index, i) => {
-                        translationResults[index].translatedText = translatedTexts[i];
+            // Step 2: Translate dynamic quiz content using a queue to ensure order
+            const translationQueue = new TranslationQueue();
+
+            // Core quiz elements (always present)
+            const coreKeys = ['question', 'option1', 'option2', 'option3', 'option4'];
+            for (let key of coreKeys) {
+                const element = document.querySelector(`[data-translate="${key}"]`);
+                if (element) {
+                    const originalText = element.textContent;
+                    await translationQueue.enqueue(async () => {
+                        const translatedText = await translateText(originalText, targetLangCode);
+                        element.textContent = translatedText;
+                        console.log(`Applied translation for "${key}": "${translatedText}"`);
                     });
-                } catch (error) {
-                    console.error('Error during batched translations:', error);
-                    // Fallback to original texts if translation fails
-                    dynamicIndices.forEach((index, i) => {
-                        translationResults[index].translatedText = dynamicTexts[i];
-                    });
+                } else {
+                    console.error(`Element with data-translate="${key}" not found!`);
                 }
             }
 
-            // Apply all translations at once
-            translationResults.forEach(result => {
-                if (result && result.translatedText) {
-                    result.element.innerHTML = result.translatedText;
+            // Feedback elements (only present if answered)
+            const feedbackKeys = ['correct-answer', 'explanation'];
+            for (let key of feedbackKeys) {
+                const element = document.querySelector(`[data-translate="${key}"]`);
+                if (element) {
+                    const originalText = element.textContent;
+                    await translationQueue.enqueue(async () => {
+                        const translatedText = await translateText(originalText, targetLangCode);
+                        element.textContent = translatedText;
+                        console.log(`Applied translation for "${key}": "${translatedText}"`);
+                    });
+                } else {
+                    console.log(`Element with data-translate="${key}" not found (expected if not answered).`);
                 }
-            });
+            }
 
-            // Hide loading spinner and show quiz content
+            // Validate option order
+            const optionElements = {
+                'option1': document.querySelector('[data-translate="option1"]'),
+                'option2': document.querySelector('[data-translate="option2"]'),
+                'option3': document.querySelector('[data-translate="option3"]'),
+                'option4': document.querySelector('[data-translate="option4"]')
+            };
+            console.log('Validating options after translation:');
+            for (let key in optionElements) {
+                const element = optionElements[key];
+                if (element) {
+                    console.log(`${key}: "${element.textContent}"`);
+                } else {
+                    console.error(`${key} element not found!`);
+                }
+            }
+
+            // Calculate elapsed time and enforce minimum delay
+            const elapsedTime = Date.now() - startTime;
+            const remainingDelay = MINIMUM_DELAY_MS - elapsedTime;
+
+            // Wait for the remaining delay if necessary
+            if (remainingDelay > 0) {
+                await delay(remainingDelay);
+            }
+
+            // Hide loading spinner and show quiz content with transition
             document.getElementById('loading').classList.add('hidden');
-            document.getElementById('quiz-content').classList.remove('hidden');
+            const quizContent = document.getElementById('quiz-content');
+            quizContent.classList.remove('hidden');
+            quizContent.classList.add('visible');
         }
 
         // Run translation on page load
