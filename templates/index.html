@@ -7,14 +7,14 @@
 <style>
     body {
         background-color: #f8f9fa;
-        font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-family: 'Montserrat', 'Noto Sans', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         margin: 0;
         padding: 0;
         color: #333;
     }
 
-    /* Prevent scrolling when modal is active */
-    body.modal-active {
+    /* Prevent scrolling when modal or loader is active */
+    body.modal-active, body.loader-active {
         overflow: hidden;
     }
 
@@ -24,17 +24,149 @@
         background: linear-gradient(to right, #ff9933 33.33%, #ffffff 33.33%, #ffffff 66.66%, #138808 66.66%);
     }
 
+    /* Loader Styling */
+    .loader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #ff9933 0%, #ffffff 50%, #138808 100%);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 2000;
+        opacity: 1;
+        transition: opacity 0.5s ease;
+    }
+
+    .loader.hidden {
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    /* Ashoka Chakra Background */
+    .ashoka-chakra {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 200px;
+        height: 200px;
+        opacity: 0.1;
+        animation: spin 20s linear infinite;
+        -webkit-animation: spin 20s linear infinite;
+    }
+
+    @keyframes spin {
+        0% { transform: translate(-50%, -50%) rotate(0deg); }
+        100% { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+
+    @-webkit-keyframes spin {
+        0% { -webkit-transform: translate(-50%, -50%) rotate(0deg); }
+        100% { -webkit-transform: translate(-50%, -50%) rotate(360deg); }
+    }
+
+    /* Loader Text */
+    .loader-text {
+        position: relative;
+        font-size: 2rem;
+        font-weight: 700;
+        color: #1a3c34;
+        text-transform: uppercase;
+        text-align: center;
+        animation: glow 2s ease-in-out infinite;
+        -webkit-animation: glow 2s ease-in-out infinite;
+        margin-bottom: 2rem;
+    }
+
+    .language-text {
+        opacity: 0;
+        visibility: hidden;
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        animation: slideIn 12s infinite;
+        -webkit-animation: slideIn 12s infinite;
+    }
+
+    /* Individual language animations with delays */
+    #lang-english { animation-delay: 0s; -webkit-animation-delay: 0s; }
+    #lang-hindi { animation-delay: 2s; -webkit-animation-delay: 2s; }
+    #lang-tamil { animation-delay: 4s; -webkit-animation-delay: 4s; }
+    #lang-telugu { animation-delay: 6s; -webkit-animation-delay: 6s; }
+    #lang-bengali { animation-delay: 8s; -webkit-animation-delay: 8s; }
+    #lang-kannada { animation-delay: 10s; -webkit-animation-delay: 10s; }
+
+    /* Keyframes for slide-in and fade */
+    @keyframes slideIn {
+        0% { opacity: 0; visibility: hidden; transform: translateX(-100%); }
+        5% { opacity: 1; visibility: visible; transform: translateX(-50%); }
+        15% { opacity: 1; visibility: visible; transform: translateX(-50%); }
+        20% { opacity: 0; visibility: hidden; transform: translateX(0%); }
+        100% { opacity: 0; visibility: hidden; transform: translateX(0%); }
+    }
+
+    @-webkit-keyframes slideIn {
+        0% { opacity: 0; visibility: hidden; -webkit-transform: translateX(-100%); }
+        5% { opacity: 1; visibility: visible; -webkit-transform: translateX(-50%); }
+        15% { opacity: 1; visibility: visible; -webkit-transform: translateX(-50%); }
+        20% { opacity: 0; visibility: hidden; -webkit-transform: translateX(0%); }
+        100% { opacity: 0; visibility: hidden; -webkit-transform: translateX(0%); }
+    }
+
+    /* Keyframes for glowing effect */
+    @keyframes glow {
+        0%, 100% { text-shadow: 0 0 15px rgba(255, 153, 51, 0.7), 0 0 25px rgba(19, 136, 8, 0.7); }
+        50% { text-shadow: 0 0 25px rgba(255, 153, 51, 1), 0 0 35px rgba(19, 136, 8, 1); }
+    }
+
+    @-webkit-keyframes glow {
+        0%, 100% { -webkit-text-shadow: 0 0 15px rgba(255, 153, 51, 0.7), 0 0 25px rgba(19, 136, 8, 0.7); }
+        50% { -webkit-text-shadow: 0 0 25px rgba(255, 153, 51, 1), 0 0 35px rgba(19, 136, 8, 1); }
+    }
+
+    /* Progress Bar */
+    .progress-bar-container {
+        width: 300px;
+        height: 5px;
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 5px;
+        overflow: hidden;
+    }
+
+    .progress-bar {
+        width: 0;
+        height: 100%;
+        background: #ff9933;
+        animation: fillProgress 12s linear forwards;
+        -webkit-animation: fillProgress 12s linear forwards;
+    }
+
+    @keyframes fillProgress {
+        0% { width: 0; }
+        100% { width: 100%; }
+    }
+
+    @-webkit-keyframes fillProgress {
+        0% { width: 0; }
+        100% { width: 100%; }
+    }
+
     .container {
         max-width: 1200px;
         margin: auto;
-        padding: 1.5rem; /* Reduced padding to save space */
+        padding: 1.5rem;
     }
 
     /* Header Section */
     .page-header {
         text-align: center;
-        margin-bottom: 2rem; /* Reduced margin */
-        padding: 1.5rem 0; /* Reduced padding */
+        margin-bottom: 2rem;
+        padding: 1.5rem 0;
         background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
         border-radius: 12px;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
@@ -59,9 +191,9 @@
     /* Language Selector */
     .language-selector {
         text-align: center;
-        margin-bottom: 1.5rem; /* Reduced margin */
+        margin-bottom: 1.5rem;
         background: #f8f9fa;
-        padding: 0.8rem; /* Reduced padding */
+        padding: 0.8rem;
         border-radius: 8px;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
         display: flex;
@@ -98,7 +230,7 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgba(0, 0, 0, 0.85); /* Slightly darker overlay */
+        background: rgba(0, 0, 0, 0.85);
         display: flex;
         justify-content: center;
         align-items: center;
@@ -222,13 +354,13 @@
     .cards-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 1.5rem; /* Reduced gap */
+        gap: 1.5rem;
         justify-items: center;
     }
 
     .card {
         background: #ffffff;
-        padding: 1.5rem; /* Reduced padding */
+        padding: 1.5rem;
         border-radius: 15px;
         box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
         text-align: center;
@@ -258,13 +390,13 @@
         width: 100px;
         height: 100px;
         object-fit: contain;
-        margin-bottom: 1rem; /* Reduced margin */
+        margin-bottom: 1rem;
         filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.1));
     }
 
     .card h3 {
         color: #1a3c34;
-        margin-bottom: 0.5rem; /* Reduced margin */
+        margin-bottom: 0.5rem;
         font-size: 1.5rem;
         font-weight: 600;
     }
@@ -273,7 +405,7 @@
         color: #666;
         font-size: 1rem;
         line-height: 1.6;
-        margin-bottom: 1rem; /* Reduced margin */
+        margin-bottom: 1rem;
     }
 
     .btn-primary {
@@ -298,9 +430,9 @@
     /* Footer Styling */
     .footer {
         background: linear-gradient(180deg, #f5f5f5 0%, #e5e7eb 100%);
-        padding: 2rem 1rem; /* Reduced padding */
+        padding: 2rem 1rem;
         text-align: center;
-        margin-top: 3rem; /* Reduced margin */
+        margin-top: 3rem;
         border-top: 4px solid #ff9933;
         position: relative;
     }
@@ -316,7 +448,7 @@
     }
 
     .footer h4 {
-        margin-bottom: 1rem; /* Reduced margin */
+        margin-bottom: 1rem;
         color: #1a3c34;
         font-size: 1.5rem;
         font-weight: 600;
@@ -326,9 +458,9 @@
     .footer .gov-icons {
         display: flex;
         justify-content: center;
-        gap: 2rem; /* Reduced gap */
+        gap: 2rem;
         flex-wrap: wrap;
-        margin-bottom: 1rem; /* Reduced margin */
+        margin-bottom: 1rem;
     }
 
     .footer .gov-icons img {
@@ -349,7 +481,47 @@
         font-weight: 500;
     }
 
-    /* Responsive Design */
+    /* Responsive Design for Loader */
+    @media (max-width: 1024px) {
+        .loader-text {
+            font-size: 1.8rem;
+        }
+        .ashoka-chakra {
+            width: 150px;
+            height: 150px;
+        }
+        .progress-bar-container {
+            width: 250px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .loader-text {
+            font-size: 1.5rem;
+        }
+        .ashoka-chakra {
+            width: 120px;
+            height: 120px;
+        }
+        .progress-bar-container {
+            width: 200px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .loader-text {
+            font-size: 1.2rem;
+        }
+        .ashoka-chakra {
+            width: 100px;
+            height: 100px;
+        }
+        .progress-bar-container {
+            width: 150px;
+        }
+    }
+
+    /* Responsive Design for Rest of the Page */
     @media (max-width: 1024px) {
         .container {
             padding: 1rem;
@@ -399,7 +571,7 @@
         }
 
         .video-container {
-            padding-bottom: 56.25%; /* Maintain 16:9 aspect ratio */
+            padding-bottom: 56.25%;
             margin-bottom: 1rem;
         }
 
@@ -503,7 +675,7 @@
         }
 
         .video-container {
-            padding-bottom: 56.25%; /* Maintain 16:9 aspect ratio */
+            padding-bottom: 56.25%;
             margin-bottom: 1rem;
         }
 
@@ -623,7 +795,7 @@
         }
 
         .video-container {
-            padding-bottom: 56.25%; /* Maintain 16:9 aspect ratio */
+            padding-bottom: 56.25%;
             margin-bottom: 0.8rem;
         }
 
@@ -683,6 +855,22 @@
         }
     }
 </style>
+
+<!-- Loader Animation -->
+<div class="loader" id="loader">
+    <img class="ashoka-chakra" src="https://upload.wikimedia.org/wikipedia/commons/1/17/Ashoka_Chakra.svg" alt="Ashoka Chakra">
+    <div class="loader-text">
+        <span class="language-text" id="lang-english">Empowering Rural Skills</span>
+        <span class="language-text" id="lang-hindi">ग्रामीण कौशल को सशक्त बनाना</span>
+        <span class="language-text" id="lang-tamil">கிராமப்புற திறன்களை மேம்படுத்துதல்</span>
+        <span class="language-text" id="lang-telugu">గ్రామీణ నైపుణ్యాలను సాధికారత</span>
+        <span class="language-text" id="lang-bengali">গ্রামীণ দক্ষতা ক্ষমতায়ন</span>
+        <span class="language-text" id="lang-kannada">ಗ್ರಾಮೀಣ ಕೌಶಲ್ಯಗಳನ್ನು ಸಬಲೀಕರಣ</span>
+    </div>
+    <div class="progress-bar-container">
+        <div class="progress-bar"></div>
+    </div>
+</div>
 
 <!-- Video Modal -->
 <div class="video-modal" id="videoModal">
@@ -791,23 +979,66 @@
     </div>
 </footer>
 
-<!-- JavaScript to Control Modal -->
+<!-- JavaScript to Control Loader and Modal -->
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        console.log('DOM fully loaded, initializing video modal...');
+        console.log('DOM fully loaded, initializing loader and video modal...');
 
+        // Loader Logic
+        const loader = document.getElementById('loader');
+        const body = document.body;
+
+        // Show loader initially
+        console.log('Showing loader...');
+        body.classList.add('loader-active');
+
+        // Log when each language animation starts
+        const languages = ['english', 'hindi', 'tamil', 'telugu', 'bengali', 'kannada'];
+        languages.forEach((lang, index) => {
+            setTimeout(() => {
+                console.log(`Animating language: ${lang}`);
+            }, index * 2000);
+        });
+
+        // Ensure minimum loader duration (e.g., 12 seconds) to see all animations
+        const MIN_LOADER_DURATION = 12000; // 12 seconds to match animation cycle
+        const startTime = Date.now();
+
+        // Function to hide loader after minimum duration
+        const hideLoader = () => {
+            const elapsedTime = Date.now() - startTime;
+            const remainingTime = MIN_LOADER_DURATION - elapsedTime;
+
+            if (remainingTime > 0) {
+                setTimeout(() => {
+                    console.log('Hiding loader after minimum duration...');
+                    loader.classList.add('hidden');
+                    body.classList.remove('loader-active');
+                }, remainingTime);
+            } else {
+                console.log('Hiding loader immediately...');
+                loader.classList.add('hidden');
+                body.classList.remove('loader-active');
+            }
+        };
+
+        // Hide loader when page is fully loaded, respecting minimum duration
+        window.addEventListener('load', () => {
+            console.log('Page fully loaded, scheduling loader hide...');
+            hideLoader();
+        });
+
+        // Video Modal Logic
         const modal = document.getElementById('videoModal');
         const video = document.getElementById('introVideo');
         const skipButton = document.getElementById('skipButton');
         const errorMessage = document.getElementById('errorMessage');
-        const body = document.body;
 
         // Function to show modal
         const showModal = () => {
             console.log('Showing video modal...');
             modal.classList.add('active');
-            body.classList.add('modal-active'); // Prevent scrolling
-            // Attempt to play the video automatically
+            body.classList.add('modal-active');
             video.play().then(() => {
                 console.log('Video playback started successfully.');
             }).catch((error) => {
@@ -820,13 +1051,18 @@
         const hideModal = () => {
             console.log('Hiding video modal...');
             modal.classList.remove('active');
-            body.classList.remove('modal-active'); // Re-enable scrolling
-            video.pause(); // Ensure video is paused
-            video.currentTime = 0; // Reset video to start
+            body.classList.remove('modal-active');
+            video.pause();
+            video.currentTime = 0;
         };
 
-        // Show modal on page load
-        showModal();
+        // Show modal after loader is hidden
+        loader.addEventListener('transitionend', () => {
+            if (loader.classList.contains('hidden')) {
+                console.log('Loader hidden, showing video modal...');
+                showModal();
+            }
+        });
 
         // Close modal when video ends
         video.addEventListener('ended', () => {
