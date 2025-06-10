@@ -79,7 +79,7 @@
         text-align: center;
         animation: glow 2s ease-in-out infinite;
         -webkit-animation: glow 2s ease-in-out infinite;
-        margin-bottom: 2rem;
+        margin-bottom: 1rem;
     }
 
     .language-text {
@@ -270,6 +270,7 @@
         width: 100%;
         height: 100%;
         border-radius: 8px;
+        z-index: 1; /* Ensure video stays below the skip button */
     }
 
     .skip-button {
@@ -285,6 +286,7 @@
         font-weight: 600;
         cursor: pointer;
         transition: background 0.3s ease;
+        z-index: 10; /* Higher z-index to ensure it’s above the video */
     }
 
     .skip-button:hover {
